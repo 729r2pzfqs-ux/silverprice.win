@@ -234,27 +234,17 @@ function updateLastUpdated() {
 function loadTradingViewChart() {
     const container = document.getElementById('tradingview-widget');
     const config = metalConfig[selectedMetal];
+    const theme = isDark ? 'dark' : 'light';
     
-    // Clear previous widget
-    container.innerHTML = '';
-    
-    // Create TradingView widget
-    new TradingView.widget({
-        "autosize": true,
-        "symbol": config.tvSymbol,
-        "interval": "60",
-        "timezone": "Etc/UTC",
-        "theme": isDark ? "dark" : "light",
-        "style": "1",
-        "locale": "en",
-        "enable_publishing": false,
-        "hide_top_toolbar": true,
-        "hide_legend": true,
-        "save_image": false,
-        "container_id": "tradingview-widget",
-        "hide_volume": true,
-        "backgroundColor": isDark ? "rgba(30, 41, 59, 0)" : "rgba(255, 255, 255, 0)"
-    });
+    // Use TradingView's mini chart widget (more reliable)
+    container.innerHTML = `
+        <iframe 
+            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview-widget&symbol=${config.tvSymbol}&interval=60&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=0&width=100%25&height=100%25"
+            style="width: 100%; height: 100%; border: none;"
+            allowtransparency="true"
+            frameborder="0"
+        ></iframe>
+    `;
 }
 
 // Calculator
@@ -279,12 +269,7 @@ function toggleTheme() {
     isDark = !isDark;
     document.body.classList.toggle('light', !isDark);
     document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
-    
-    // Reload TradingView chart with new theme
-    if (typeof TradingView !== 'undefined') {
-        loadTradingViewChart();
-    }
-    
+    loadTradingViewChart();
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
 
@@ -301,12 +286,6 @@ document.getElementById('calcUnit').addEventListener('change', updateCalculator)
 // Init
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchPrices();
-    
-    // Load TradingView library then init chart
-    const script = document.createElement('script');
-    script.src = 'https://s3.tradingview.com/tv.js';
-    script.onload = () => loadTradingViewChart();
-    document.head.appendChild(script);
-    
+    loadTradingViewChart();
     setInterval(fetchPrices, 60000);
 });
