@@ -296,10 +296,10 @@ document.getElementById('currency').addEventListener('change', e => { currentCur
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
-// Init
-document.addEventListener('DOMContentLoaded', async () => {
+// Init - use window.onload to ensure everything is ready
+window.addEventListener('load', async () => {
     await fetchPrices();
-    // Small delay to ensure container is ready
-    setTimeout(() => loadTradingViewChart(), 100);
+    // Longer delay to ensure DOM is fully painted
+    setTimeout(() => loadTradingViewChart(), 500);
     setInterval(fetchPrices, 60000);
 });
