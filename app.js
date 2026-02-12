@@ -210,7 +210,7 @@ function selectMetal(metal) {
 
 function updateUI() {
     const rate = currencyRates[currentCurrency];
-    const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', MYR: 'RM', AUD: 'A$' };
+    const symbols = { USD: '$', EUR: '€', GBP: '£', CNY: '¥', INR: '₹', MYR: 'RM', AUD: 'A$' };
     const symbol = symbols[currentCurrency] || '$';
     const data = prices[selectedMetal];
     const config = metalConfig[selectedMetal];
@@ -311,7 +311,7 @@ function updateCalculator() {
     else value = (pricePerOz / TROY_OZ_TO_KG) * amount;
     
     const rate = currencyRates[currentCurrency];
-    const symbols = { USD: '$', EUR: '€', GBP: '£', INR: '₹', MYR: 'RM', AUD: 'A$' };
+    const symbols = { USD: '$', EUR: '€', GBP: '£', CNY: '¥', INR: '₹', MYR: 'RM', AUD: 'A$' };
     const symbol = symbols[currentCurrency] || '$';
     
     // Format based on currency (INR uses Indian locale)
