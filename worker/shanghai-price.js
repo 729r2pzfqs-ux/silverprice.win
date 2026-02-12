@@ -43,26 +43,26 @@ export default {
       const html = shanghaiHtml;
       
       // Parse the price from the page
-      // Looking for patterns like "88.64USD/OZ" and "$83.62" (western spot)
+      // goldsilver.ai uses React hydration comments like $<!-- -->83.62
       
       let shanghaiPrice = null;
       let westernSpot = null;
       let premium = null;
       
-      // Shanghai price pattern: XX.XXUSD/OZ
-      const shanghaiMatch = html.match(/(\d+\.\d+)USD\/OZ/);
+      // Shanghai price: "font-bold">88.64</span>...USD/OZ
+      const shanghaiMatch = html.match(/font-bold[^>]*>(\d+\.\d+)<\/span>[\s\S]*?USD\/OZ/);
       if (shanghaiMatch) {
         shanghaiPrice = parseFloat(shanghaiMatch[1]);
       }
       
-      // Western spot: $XX.XX before "Premium"
-      const spotMatch = html.match(/\$(\d+\.\d+)\s*\n\s*\+\$[\d.]+\s*Premium/);
+      // Western spot: $<!-- -->83.62 (color:#c0c0c0 is silver color)
+      const spotMatch = html.match(/color:#c0c0c0[^>]*>\$(?:<!--\s*-->)?(\d+\.\d+)/);
       if (spotMatch) {
         westernSpot = parseFloat(spotMatch[1]);
       }
       
-      // Premium: +$X.XX
-      const premiumMatch = html.match(/\+\$(\d+\.\d+)\s*Premium/i);
+      // Premium: +<!-- -->$<!-- -->5.02
+      const premiumMatch = html.match(/\+(?:<!--\s*-->)?\$(?:<!--\s*-->)?(\d+\.\d+)/);
       if (premiumMatch) {
         premium = parseFloat(premiumMatch[1]);
       }
