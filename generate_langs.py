@@ -106,11 +106,13 @@ def update_html_for_lang(html, lang):
         html = html.replace('href="/blog.html"', 'href="/blog.html"')
         html = html.replace('href="blog.html"', 'href="../blog.html"')
     
-    # Add script to set language BEFORE app.js loads
+    # Add script to set language BEFORE app.js loads (with cache-bust)
+    import time
+    cache_bust = int(time.time())
     lang_script = f'''<script>window.pageLang = '{lang}';</script>
     <script src="'''
-    html = html.replace('<script src="app.js">', lang_script + 'app.js">')
-    html = html.replace('<script src="../app.js">', lang_script + '../app.js">')
+    html = html.replace('<script src="app.js">', lang_script + f'app.js?v={cache_bust}">')
+    html = html.replace('<script src="../app.js">', lang_script + f'../app.js?v={cache_bust}">')
     
     # Remove any existing dropdown JS first
     html = re.sub(
