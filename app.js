@@ -14,7 +14,6 @@ let prices = {
 let currentCurrency = 'USD';
 let currencyRates = { USD: 1, EUR: 0.92, GBP: 0.79 };
 let selectedMetal = 'gold';
-let tvWidget = null;
 
 const metalConfig = {
     gold: { name: 'Gold', code: 'XAU/USD', tvSymbol: 'TVC:GOLD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
@@ -23,84 +22,55 @@ const metalConfig = {
     palladium: { name: 'Palladium', code: 'XPD/USD', tvSymbol: 'TVC:PALLADIUM', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' }
 };
 
-// Fetch prices from goldprice.org
+// Fetch prices from MetalpriceAPI
 async function fetchPrices() {
     try {
-        const response = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
+        const response = await fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METALPRICE_API_KEY}&currencies=XAU,XAG,XPT,XPD`);
         const data = await response.json();
         
-        if (data && data.items && data.items[0]) {
-            const item = data.items[0];
+        if (data && data.success && data.rates) {
             prices.gold = {
-                price: item.xauPrice,
-                change: item.chgXau,
-                high: item.xauPrice + Math.abs(item.chgXau) * 0.5,
-                low: item.xauPrice - Math.abs(item.chgXau) * 0.5
+                price: data.rates.USDXAU || 0,
+                change: 0,
+                high: (data.rates.USDXAU || 0) * 1.005,
+                low: (data.rates.USDXAU || 0) * 0.995
             };
             prices.silver = {
-                price: item.xagPrice,
-                change: item.chgXag,
-                high: item.xagPrice + Math.abs(item.chgXag) * 0.3,
-                low: item.xagPrice - Math.abs(item.chgXag) * 0.3
+                price: data.rates.USDXAG || 0,
+                change: 0,
+                high: (data.rates.USDXAG || 0) * 1.005,
+                low: (data.rates.USDXAG || 0) * 0.995
+            };
+            prices.platinum = {
+                price: data.rates.USDXPT || 0,
+                change: 0,
+                high: (data.rates.USDXPT || 0) * 1.005,
+                low: (data.rates.USDXPT || 0) * 0.995
+            };
+            prices.palladium = {
+                price: data.rates.USDXPD || 0,
+                change: 0,
+                high: (data.rates.USDXPD || 0) * 1.005,
+                low: (data.rates.USDXPD || 0) * 0.995
             };
         }
         
-        await fetchOtherMetals();
         fetchShanghaiSilver();
         updateUI();
-        if (chart) updateChart();
         updateLastUpdated();
         
     } catch (error) {
         console.error('Error:', error);
-        await fetchFallbackPrices();
+        fetchFallbackPrices();
         updateUI();
-        if (chart) updateChart();
     }
 }
 
-async function fetchOtherMetals() {
-    // Fetch Platinum from Kitco
-    try {
-        const ptResponse = await fetch('https://proxy.kitco.com/getPM?symbol=PT&currency=USD');
-        const ptData = await ptResponse.text();
-        const ptParts = ptData.split(',');
-        if (ptParts.length >= 8) {
-            prices.platinum = {
-                price: parseFloat(ptParts[4]) || 2100,
-                change: parseFloat(ptParts[7]) || 0,
-                high: parseFloat(ptParts[6]) || 2100,
-                low: parseFloat(ptParts[5]) || 2100
-            };
-        }
-    } catch (e) {
-        prices.platinum = { price: 2100, change: 0, high: 2110, low: 2090 };
-    }
-    
-    // Fetch Palladium from Kitco
-    try {
-        const pdResponse = await fetch('https://proxy.kitco.com/getPM?symbol=PD&currency=USD');
-        const pdData = await pdResponse.text();
-        const pdParts = pdData.split(',');
-        if (pdParts.length >= 8) {
-            prices.palladium = {
-                price: parseFloat(pdParts[4]) || 1700,
-                change: parseFloat(pdParts[7]) || 0,
-                high: parseFloat(pdParts[6]) || 1700,
-                low: parseFloat(pdParts[5]) || 1700
-            };
-        }
-    } catch (e) {
-        prices.palladium = { price: 1700, change: 0, high: 1710, low: 1690 };
-    }
-    
-}
-
-async function fetchFallbackPrices() {
-    prices.gold = { price: 5068, change: -5.7, high: 5080, low: 5050 };
-    prices.silver = { price: 82.6, change: -1.5, high: 83.5, low: 82 };
-    prices.platinum = { price: 2122, change: -9, high: 2155, low: 2084 };
-    prices.palladium = { price: 1697, change: -2, high: 1752, low: 1665 };
+function fetchFallbackPrices() {
+    prices.gold = { price: 5045, change: 0, high: 5070, low: 5020 };
+    prices.silver = { price: 81.65, change: 0, high: 82.5, low: 81 };
+    prices.platinum = { price: 2107, change: 0, high: 2120, low: 2090 };
+    prices.palladium = { price: 1722, change: 0, high: 1740, low: 1700 };
     fetchShanghaiSilver();
 }
 
@@ -108,7 +78,7 @@ async function fetchShanghaiSilver() {
     const OZ_PER_KG = 1000 / TROY_OZ_TO_GRAM;
     const usdToCny = 7.24;
     
-    // Try Cloudflare Worker for real Shanghai + Copper data
+    // Try Cloudflare Worker for real Shanghai data
     try {
         const response = await fetch('https://metal-prices-api.729r2pzfqs.workers.dev/');
         const data = await response.json();
@@ -118,7 +88,6 @@ async function fetchShanghaiSilver() {
             prices.shanghai.cnyPerKg = data.shanghai.cnyPerKg;
             prices.shanghai.premium = data.premium.percent;
         }
-        
         return;
     } catch (e) {
         console.log('Worker fallback:', e);
@@ -168,7 +137,7 @@ function updateUI() {
     // Price
     const price = data.price * rate;
     const change = data.change * rate;
-    const changePct = (data.change / (data.price - data.change)) * 100;
+    const changePct = data.price > 0 ? (data.change / data.price) * 100 : 0;
     
     document.getElementById('metalPrice').textContent = `${symbol}${price.toFixed(2)}`;
     
@@ -191,7 +160,7 @@ function updateUI() {
         document.getElementById('shanghaiPrice').textContent = `$${prices.shanghai.usdPerOz.toFixed(2)}`;
         
         const premiumUsd = prices.shanghai.usdPerOz - prices.silver.price;
-        const premiumPct = (premiumUsd / prices.silver.price) * 100;
+        const premiumPct = prices.silver.price > 0 ? (premiumUsd / prices.silver.price) * 100 : 0;
         document.getElementById('shanghaiPremium').textContent = `+$${premiumUsd.toFixed(2)}`;
         document.getElementById('shanghaiPremiumPct').textContent = `(+${premiumPct.toFixed(1)}%)`;
         
@@ -214,7 +183,7 @@ function updateLastUpdated() {
     document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
-// TradingView Chart - Simple iframe embed (most reliable)
+// TradingView Chart - Simple iframe embed
 function loadTradingViewChart() {
     const container = document.getElementById('tradingview-widget');
     if (!container) return;
@@ -222,7 +191,6 @@ function loadTradingViewChart() {
     const config = metalConfig[selectedMetal];
     const theme = isDark ? 'dark' : 'light';
     
-    // Simple iframe embed - works immediately
     container.innerHTML = `<iframe 
         src="https://www.tradingview.com/widgetembed/?symbol=${config.tvSymbol}&interval=60&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=000000&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"
         style="width:100%;height:100%;border:none;"
@@ -270,7 +238,7 @@ document.getElementById('calcUnit').addEventListener('change', updateCalculator)
 
 // Init
 document.addEventListener('DOMContentLoaded', async () => {
-    loadTradingViewChart();  // Load chart immediately
+    loadTradingViewChart();
     await fetchPrices();
     setInterval(fetchPrices, 60000);
 });
