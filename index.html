@@ -53,23 +53,35 @@
 
     <main class="max-w-2xl mx-auto px-4 py-4">
         <!-- Metal Selector Tabs -->
-        <div class="flex gap-2 mb-4">
-            <button onclick="selectMetal('gold')" id="tab-gold" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-yellow-500/20 border-2 border-yellow-500/50 active">
+        <div class="grid grid-cols-5 gap-2 mb-4">
+            <button onclick="selectMetal('gold')" id="tab-gold" class="metal-tab py-2 px-2 rounded-xl bg-yellow-500/20 border-2 border-yellow-500/50 active">
                 <div class="text-center">
-                    <span class="text-xl">🥇</span>
-                    <div class="text-sm font-medium mt-1">Gold</div>
+                    <span class="text-lg">🥇</span>
+                    <div class="text-xs font-medium mt-1">Gold</div>
                 </div>
             </button>
-            <button onclick="selectMetal('silver')" id="tab-silver" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-slate-700/50 border-2 border-transparent">
+            <button onclick="selectMetal('silver')" id="tab-silver" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
                 <div class="text-center">
-                    <span class="text-xl">🥈</span>
-                    <div class="text-sm font-medium mt-1">Silver</div>
+                    <span class="text-lg">🥈</span>
+                    <div class="text-xs font-medium mt-1">Silver</div>
                 </div>
             </button>
-            <button onclick="selectMetal('platinum')" id="tab-platinum" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-slate-700/50 border-2 border-transparent">
+            <button onclick="selectMetal('platinum')" id="tab-platinum" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
                 <div class="text-center">
-                    <span class="text-xl">💎</span>
-                    <div class="text-sm font-medium mt-1">Platinum</div>
+                    <span class="text-lg">💎</span>
+                    <div class="text-xs font-medium mt-1">Platinum</div>
+                </div>
+            </button>
+            <button onclick="selectMetal('palladium')" id="tab-palladium" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center">
+                    <span class="text-lg">⚪</span>
+                    <div class="text-xs font-medium mt-1">Palladium</div>
+                </div>
+            </button>
+            <button onclick="selectMetal('copper')" id="tab-copper" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center">
+                    <span class="text-lg">🔶</span>
+                    <div class="text-xs font-medium mt-1">Copper</div>
                 </div>
             </button>
         </div>
