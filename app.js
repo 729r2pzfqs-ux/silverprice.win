@@ -56,7 +56,7 @@ let prices = {
     silver: { price: 0, change: 0, high: 0, low: 0 },
     platinum: { price: 0, change: 0, high: 0, low: 0 },
     palladium: { price: 0, change: 0, high: 0, low: 0 },
-    shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 },
+    shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0, marketOpen: false },
     india: { inrPerKg: 0, inrPerGram: 0, premiumPct: 10.5, forex: 90.74, source: 'calculated', marketOpen: false }
 };
 
@@ -147,6 +147,7 @@ async function fetchRegionalPrices() {
             prices.shanghai.usdPerOz = data.shanghai.usdPerOz;
             prices.shanghai.cnyPerKg = data.shanghai.cnyPerKg;
             prices.shanghai.premium = data.premium.percent;
+            prices.shanghai.marketOpen = data.shanghai.marketOpen || false;
         }
         
         // India MCX
@@ -242,12 +243,10 @@ function updateUI() {
         document.getElementById('shanghaiCnyKg').textContent = `¥${prices.shanghai.cnyPerKg.toFixed(0)}`;
         document.getElementById('shanghaiUsdKg').textContent = `$${(prices.shanghai.cnyPerKg / 7.24).toFixed(0)}`;
         
-        // Shanghai market status (09:00-11:30, 13:30-15:30 Beijing time)
-        const beijingHour = (new Date().getUTCHours() + 8) % 24;
-        const beijingMin = new Date().getUTCMinutes();
-        const beijingTime = beijingHour + beijingMin / 60;
-        const isOpen = (beijingTime >= 9 && beijingTime < 11.5) || (beijingTime >= 13.5 && beijingTime < 15.5);
-        document.getElementById('shanghaiStatus').textContent = isOpen ? '🟢' : '🔴';
+        // Shanghai market status
+        const shanghaiOpen = prices.shanghai.marketOpen;
+        document.getElementById('shanghaiMarketStatus').textContent = shanghaiOpen ? '🟢' : '🔴';
+        document.getElementById('shanghaiMarketStatusText').textContent = shanghaiOpen ? 'Open' : 'Closed';
         
         // India MCX
         const indiaUsdOz = prices.india.inrPerKg / OZ_PER_KG / prices.india.forex;

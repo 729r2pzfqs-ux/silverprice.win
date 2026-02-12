@@ -77,6 +77,11 @@ export default {
       
       const html = shanghaiHtml;
       
+      // Time calculations for market hours
+      const now = new Date();
+      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const dayOfWeek = now.getUTCDay(); // 0=Sun, 6=Sat
+      
       let shanghaiPrice = null;
       let westernSpot = null;
       let premium = null;
@@ -110,6 +115,18 @@ export default {
         premium = shanghaiPrice - westernSpot;
       }
       
+      // Shanghai market hours: Mon-Fri 9:00-11:30, 13:30-15:30, 21:00-02:30 Beijing time (UTC+8)
+      const beijingOffset = 8 * 60; // UTC+8
+      const beijingMinutes = (utcMinutes + beijingOffset) % (24 * 60);
+      const beijingHours = beijingMinutes / 60;
+      // Sessions: morning 9:00-11:30, afternoon 13:30-15:30, night 21:00-02:30
+      const isShanghaiOpen = dayOfWeek >= 1 && dayOfWeek <= 5 && (
+        (beijingMinutes >= 540 && beijingMinutes <= 690) ||   // 9:00-11:30
+        (beijingMinutes >= 810 && beijingMinutes <= 930) ||   // 13:30-15:30
+        (beijingMinutes >= 1260) ||                            // 21:00-24:00
+        (beijingMinutes <= 150)                                // 00:00-02:30
+      );
+      
       // Fetch real MCX Silver price from TradingView
       const OZ_PER_KG = 32.1507;
       let mcxPricePerKg = null;
@@ -130,12 +147,8 @@ export default {
       }
       
       // MCX market hours: Mon-Fri 9:00 AM - 11:30 PM IST (UTC+5:30)
-      const now = new Date();
       const istOffset = 5.5 * 60; // IST is UTC+5:30
-      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
       const istMinutes = (utcMinutes + istOffset) % (24 * 60);
-      const istHours = istMinutes / 60;
-      const dayOfWeek = now.getUTCDay(); // 0=Sun, 6=Sat
       
       // MCX open: Mon-Fri, 9:00 (540 min) to 23:30 (1410 min) IST
       const isMcxOpen = dayOfWeek >= 1 && dayOfWeek <= 5 && 
@@ -164,7 +177,8 @@ export default {
         shanghai: {
           usdPerOz: shanghaiPrice || 88.0,
           cnyPerKg: shanghaiPrice ? shanghaiPrice * OZ_PER_KG * forex.CNY : 20500,
-          cnyPerGram: shanghaiPrice ? (shanghaiPrice * OZ_PER_KG * forex.CNY) / 1000 : 20.5
+          cnyPerGram: shanghaiPrice ? (shanghaiPrice * OZ_PER_KG * forex.CNY) / 1000 : 20.5,
+          marketOpen: isShanghaiOpen
         },
         western: {
           usdPerOz: westernSpot || 83.0
@@ -211,7 +225,7 @@ export default {
     } catch (error) {
       // Return fallback data on error
       const fallback = {
-        shanghai: { usdPerOz: 88.0, cnyPerKg: 20500, cnyPerGram: 20.5 },
+        shanghai: { usdPerOz: 88.0, cnyPerKg: 20500, cnyPerGram: 20.5, marketOpen: false },
         western: { usdPerOz: 83.0 },
         premium: { usd: 5.0, percent: 6.0 },
         india: { inrPerKg: 270000, inrPerGram: "270.00", usdPerOz: "92.50", premiumUsd: "9.50", premiumPercent: "10.5", source: "fallback", marketOpen: false },
