@@ -14,17 +14,15 @@ let prices = {
 
 let currentCurrency = 'USD';
 let currencyRates = { USD: 1, EUR: 0.92, GBP: 0.79 };
-let chart = null;
-let candlestickSeries = null;
 let selectedMetal = 'gold';
-let currentTimeframe = '1D';
+let tvWidget = null;
 
 const metalConfig = {
-    gold: { name: 'Gold', code: 'XAU/USD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
-    silver: { name: 'Silver', code: 'XAG/USD', color: '#C0C0C0', borderColor: 'border-slate-400/50', bgColor: 'bg-slate-400/20' },
-    platinum: { name: 'Platinum', code: 'XPT/USD', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' },
-    palladium: { name: 'Palladium', code: 'XPD/USD', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' },
-    copper: { name: 'Copper', code: 'HG/USD', color: '#F97316', borderColor: 'border-orange-500/50', bgColor: 'bg-orange-500/20' }
+    gold: { name: 'Gold', code: 'XAU/USD', tvSymbol: 'TVC:GOLD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
+    silver: { name: 'Silver', code: 'XAG/USD', tvSymbol: 'TVC:SILVER', color: '#C0C0C0', borderColor: 'border-slate-400/50', bgColor: 'bg-slate-400/20' },
+    platinum: { name: 'Platinum', code: 'XPT/USD', tvSymbol: 'TVC:PLATINUM', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' },
+    palladium: { name: 'Palladium', code: 'XPD/USD', tvSymbol: 'TVC:PALLADIUM', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' },
+    copper: { name: 'Copper', code: 'HG/USD', tvSymbol: 'COMEX:HG1!', color: '#F97316', borderColor: 'border-orange-500/50', bgColor: 'bg-orange-500/20' }
 };
 
 // Fetch prices from goldprice.org
@@ -170,7 +168,7 @@ function selectMetal(metal) {
     document.getElementById('shanghaiSection').classList.toggle('hidden', metal !== 'silver');
     
     updateUI();
-    updateChart();
+    loadTradingViewChart();
 }
 
 function updateUI() {
@@ -232,166 +230,31 @@ function updateLastUpdated() {
     document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
-// Chart
-function initChart() {
-    const container = document.getElementById('priceChart');
+// TradingView Chart
+function loadTradingViewChart() {
+    const container = document.getElementById('tradingview-widget');
+    const config = metalConfig[selectedMetal];
     
-    chart = LightweightCharts.createChart(container, {
-        width: container.clientWidth,
-        height: 256,
-        layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#94a3b8' },
-        grid: { vertLines: { color: 'rgba(255,255,255,0.05)' }, horzLines: { color: 'rgba(255,255,255,0.05)' } },
-        rightPriceScale: { 
-            borderColor: 'rgba(255,255,255,0.1)',
-            scaleMargins: { top: 0.15, bottom: 0.15 }  // Add padding so price isn't cut off
-        },
-        timeScale: { borderColor: 'rgba(255,255,255,0.1)', timeVisible: true },
+    // Clear previous widget
+    container.innerHTML = '';
+    
+    // Create TradingView widget
+    new TradingView.widget({
+        "autosize": true,
+        "symbol": config.tvSymbol,
+        "interval": "60",
+        "timezone": "Etc/UTC",
+        "theme": isDark ? "dark" : "light",
+        "style": "1",
+        "locale": "en",
+        "enable_publishing": false,
+        "hide_top_toolbar": true,
+        "hide_legend": true,
+        "save_image": false,
+        "container_id": "tradingview-widget",
+        "hide_volume": true,
+        "backgroundColor": isDark ? "rgba(30, 41, 59, 0)" : "rgba(255, 255, 255, 0)"
     });
-    
-    candlestickSeries = chart.addCandlestickSeries({
-        upColor: '#22c55e', downColor: '#ef4444',
-        borderDownColor: '#ef4444', borderUpColor: '#22c55e',
-        wickDownColor: '#ef4444', wickUpColor: '#22c55e',
-    });
-    
-    window.addEventListener('resize', () => chart.applyOptions({ width: container.clientWidth }));
-    updateChart();
-}
-
-function setTimeframe(tf) {
-    currentTimeframe = tf;
-    document.querySelectorAll('.timeframe-btn').forEach(btn => {
-        btn.className = 'timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700';
-    });
-    event.target.className = 'timeframe-btn px-3 py-1 text-xs rounded bg-slate-700';
-    updateChart();
-}
-
-// Cache for historical data
-let historicalCache = {};
-
-async function updateChart() {
-    const metalSymbols = { gold: 'XAU', silver: 'XAG', platinum: 'XPT', palladium: 'XPD', copper: 'XCU' };
-    const symbol = metalSymbols[selectedMetal];
-    const basePrice = prices[selectedMetal].price || 100;
-    
-    // For copper or 1D view, use simulated (API has no intraday data)
-    if (selectedMetal === 'copper' || currentTimeframe === '1D') {
-        updateChartSimulated();
-        return;
-    }
-    
-    // Try to fetch real OHLC data (5 days max on free tier)
-    const cacheKey = `${symbol}_${currentTimeframe}`;
-    const now = Date.now();
-    
-    // Use cache if fresh (15 min)
-    if (historicalCache[cacheKey] && (now - historicalCache[cacheKey].time) < 900000) {
-        candlestickSeries.setData(historicalCache[cacheKey].data);
-        chart.timeScale().fitContent();
-        return;
-    }
-    
-    try {
-        // Calculate date range (max 5 days for free tier)
-        const days = currentTimeframe === '1W' ? 5 : 5;
-        const endDate = new Date();
-        const startDate = new Date(endDate);
-        startDate.setDate(startDate.getDate() - days);
-        
-        const formatDate = d => d.toISOString().split('T')[0];
-        const candleData = [];
-        
-        // Fetch OHLC for each day (builds proper candlesticks)
-        for (let i = 0; i <= days; i++) {
-            const date = new Date(startDate);
-            date.setDate(date.getDate() + i);
-            const dateStr = formatDate(date);
-            
-            // Skip future dates and today (incomplete candle)
-            const today = formatDate(endDate);
-            if (date > endDate || dateStr === today) continue;
-            
-            try {
-                const ohlcUrl = `https://api.metalpriceapi.com/v1/ohlc?api_key=${METALPRICE_API_KEY}&base=${symbol}&currency=USD&date=${dateStr}`;
-                const resp = await fetch(ohlcUrl);
-                const data = await resp.json();
-                
-                if (data.success && data.rate) {
-                    candleData.push({
-                        time: Math.floor(date.getTime() / 1000),
-                        open: +data.rate.open.toFixed(2),
-                        high: +data.rate.high.toFixed(2),
-                        low: +data.rate.low.toFixed(2),
-                        close: +data.rate.close.toFixed(2)
-                    });
-                }
-            } catch (e) {
-                console.log(`Skip ${dateStr}:`, e);
-            }
-        }
-        
-        // Add today's partial candle from live data
-        const todayOpen = candleData.length > 0 ? candleData[candleData.length - 1].close : basePrice;
-        candleData.push({
-            time: Math.floor(new Date().setHours(0,0,0,0) / 1000),
-            open: todayOpen,
-            high: Math.max(todayOpen, basePrice) * 1.002,
-            low: Math.min(todayOpen, basePrice) * 0.998,
-            close: basePrice
-        });
-        
-        if (candleData.length > 1) {
-            // Cache the result
-            historicalCache[cacheKey] = { data: candleData, time: now };
-            candlestickSeries.setData(candleData);
-            chart.timeScale().fitContent();
-            console.log(`✅ Real OHLC data: ${candleData.length} candles`);
-            return;
-        }
-    } catch (e) {
-        console.log('OHLC fetch error:', e);
-    }
-    
-    // Fallback to simulated
-    updateChartSimulated();
-}
-
-function updateChartSimulated() {
-    const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 7 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
-    const basePrice = prices[selectedMetal].price || 100;
-    const change = prices[selectedMetal].change || 0;
-    const volatility = selectedMetal === 'gold' ? 0.003 : selectedMetal === 'silver' ? 0.006 : selectedMetal === 'copper' ? 0.008 : 0.004;
-    
-    const candleData = [];
-    const now = Math.floor(Date.now() / 1000);
-    const interval = currentTimeframe === '1D' ? 3600 : 86400;
-    
-    const totalChange = currentTimeframe === '1D' ? change : change * (points / 24);
-    let price = basePrice - totalChange;
-    
-    for (let i = 0; i < points; i++) {
-        const progress = i / (points - 1);
-        const targetPrice = (basePrice - totalChange) + (totalChange * progress);
-        const noise = (Math.random() - 0.5) * volatility * basePrice;
-        const open = price;
-        const close = targetPrice + noise * 0.3;
-        const body = Math.abs(close - open);
-        const wick = Math.max(body * 0.3, basePrice * volatility * 0.2);
-        const high = Math.max(open, close) + Math.random() * wick;
-        const low = Math.min(open, close) - Math.random() * wick;
-        
-        candleData.push({
-            time: now - (points - i) * interval,
-            open: +open.toFixed(2), high: +high.toFixed(2), low: +low.toFixed(2), close: +close.toFixed(2)
-        });
-        price = close;
-    }
-    
-    if (candleData.length) candleData[candleData.length - 1].close = basePrice;
-    
-    candlestickSeries.setData(candleData);
-    chart.timeScale().fitContent();
 }
 
 // Calculator
@@ -417,15 +280,9 @@ function toggleTheme() {
     document.body.classList.toggle('light', !isDark);
     document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
     
-    // Update chart colors
-    if (chart) {
-        chart.applyOptions({
-            layout: { textColor: isDark ? '#94a3b8' : '#475569' },
-            grid: {
-                vertLines: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
-                horzLines: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
-            }
-        });
+    // Reload TradingView chart with new theme
+    if (typeof TradingView !== 'undefined') {
+        loadTradingViewChart();
     }
     
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -444,6 +301,12 @@ document.getElementById('calcUnit').addEventListener('change', updateCalculator)
 // Init
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchPrices();
-    initChart();
+    
+    // Load TradingView library then init chart
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/tv.js';
+    script.onload = () => loadTradingViewChart();
+    document.head.appendChild(script);
+    
     setInterval(fetchPrices, 60000);
 });

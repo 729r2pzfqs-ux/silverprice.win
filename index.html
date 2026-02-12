@@ -6,7 +6,7 @@
     <title>SilverPrice.win - Live Silver, Gold & Metal Prices</title>
     <meta name="description" content="Live precious metal prices - Silver, Gold, Platinum, Palladium, Copper. Real-time spot prices, charts, and Shanghai silver premium.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+    <!-- TradingView Widget -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -128,16 +128,9 @@
             </div>
         </div>
 
-        <!-- Chart -->
-        <div class="metal-card rounded-2xl border border-slate-700/50 p-4 mb-4">
-            <div class="flex gap-2 mb-3">
-                <button onclick="setTimeframe('1D')" class="timeframe-btn px-3 py-1 text-xs rounded bg-slate-700">1D</button>
-                <button onclick="setTimeframe('1W')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1W</button>
-                <button onclick="setTimeframe('1M')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1M</button>
-                <button onclick="setTimeframe('3M')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">3M</button>
-                <button onclick="setTimeframe('1Y')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1Y</button>
-            </div>
-            <div class="h-64" id="priceChart"></div>
+        <!-- TradingView Chart -->
+        <div class="metal-card rounded-2xl border border-slate-700/50 overflow-hidden mb-4">
+            <div id="tradingview-widget" class="h-80"></div>
         </div>
 
         <!-- Shanghai Silver Section (only visible when silver selected) -->
