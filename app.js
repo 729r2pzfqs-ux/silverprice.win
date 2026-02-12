@@ -61,31 +61,47 @@ async function fetchPrices() {
 }
 
 async function fetchOtherMetals() {
-    // Platinum ~20% of gold
-    const platinumRatio = 0.20;
-    prices.platinum = {
-        price: prices.gold.price * platinumRatio,
-        change: prices.gold.change * platinumRatio,
-        high: prices.gold.price * platinumRatio * 1.01,
-        low: prices.gold.price * platinumRatio * 0.99
-    };
+    // Fetch Platinum from Kitco
+    try {
+        const ptResponse = await fetch('https://proxy.kitco.com/getPM?symbol=PT&currency=USD');
+        const ptData = await ptResponse.text();
+        const ptParts = ptData.split(',');
+        if (ptParts.length >= 8) {
+            prices.platinum = {
+                price: parseFloat(ptParts[4]) || 2100,
+                change: parseFloat(ptParts[7]) || 0,
+                high: parseFloat(ptParts[6]) || 2100,
+                low: parseFloat(ptParts[5]) || 2100
+            };
+        }
+    } catch (e) {
+        prices.platinum = { price: 2100, change: 0, high: 2110, low: 2090 };
+    }
     
-    // Palladium ~18% of gold
-    const palladiumRatio = 0.18;
-    prices.palladium = {
-        price: prices.gold.price * palladiumRatio,
-        change: prices.gold.change * palladiumRatio,
-        high: prices.gold.price * palladiumRatio * 1.01,
-        low: prices.gold.price * palladiumRatio * 0.99
-    };
+    // Fetch Palladium from Kitco
+    try {
+        const pdResponse = await fetch('https://proxy.kitco.com/getPM?symbol=PD&currency=USD');
+        const pdData = await pdResponse.text();
+        const pdParts = pdData.split(',');
+        if (pdParts.length >= 8) {
+            prices.palladium = {
+                price: parseFloat(pdParts[4]) || 1700,
+                change: parseFloat(pdParts[7]) || 0,
+                high: parseFloat(pdParts[6]) || 1700,
+                low: parseFloat(pdParts[5]) || 1700
+            };
+        }
+    } catch (e) {
+        prices.palladium = { price: 1700, change: 0, high: 1710, low: 1690 };
+    }
     
-    // Copper ~$4.50/lb, convert to per oz (~$0.28/oz)
-    // Copper is priced per pound, 1 lb = 14.583 troy oz
-    const copperPerLb = 4.50 + (Math.random() - 0.5) * 0.1;
+    // Copper - estimated (no free API with CORS)
+    // ~$4.50/lb, 1 lb = 14.583 troy oz
+    const copperPerLb = 4.50;
     const copperPerOz = copperPerLb / 14.583;
     prices.copper = {
         price: copperPerOz,
-        change: (Math.random() - 0.5) * 0.01,
+        change: 0,
         high: copperPerOz * 1.01,
         low: copperPerOz * 0.99
     };
@@ -94,9 +110,9 @@ async function fetchOtherMetals() {
 async function fetchFallbackPrices() {
     prices.gold = { price: 5068, change: -5.7, high: 5080, low: 5050 };
     prices.silver = { price: 82.6, change: -1.5, high: 83.5, low: 82 };
-    prices.platinum = { price: 1013, change: -1.1, high: 1020, low: 1005 };
-    prices.palladium = { price: 912, change: -2.3, high: 920, low: 905 };
-    prices.copper = { price: 0.31, change: -0.002, high: 0.315, low: 0.305 };
+    prices.platinum = { price: 2122, change: -9, high: 2155, low: 2084 };
+    prices.palladium = { price: 1697, change: -2, high: 1752, low: 1665 };
+    prices.copper = { price: 0.31, change: 0, high: 0.315, low: 0.305 };
     fetchShanghaiSilver();
 }
 
