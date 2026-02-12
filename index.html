@@ -183,9 +183,15 @@
 
             <!-- India MCX Silver -->
             <div class="metal-card rounded-2xl border border-orange-500/30 p-4 mb-4">
-                <div class="flex items-center gap-2 mb-3">
-                    <span>🇮🇳</span>
-                    <h3 class="font-semibold" data-i18n="indiaMcx">India MCX Silver</h3>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span>🇮🇳</span>
+                        <h3 class="font-semibold" data-i18n="indiaMcx">India MCX Silver</h3>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span id="indiaMcxStatus">🔴</span>
+                        <span id="indiaMcxStatusText" class="text-slate-400">Closed</span>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 mb-3">

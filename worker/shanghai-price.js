@@ -110,15 +110,44 @@ export default {
         premium = shanghaiPrice - westernSpot;
       }
       
-      // Calculate India MCX Silver price
-      // MCX trades in ₹/kg
-      // Formula: Spot USD/oz × 32.15 oz/kg × USD/INR × 1.105 (7.5% import duty + 3% GST)
-      const INDIA_DUTY_MULTIPLIER = 1.105;  // 7.5% duty + 3% GST = 10.5%
+      // Fetch real MCX Silver price from TradingView
       const OZ_PER_KG = 32.1507;
+      let mcxPricePerKg = null;
+      let mcxSource = 'calculated';
       
-      const mcxPricePerKg = westernSpot 
-        ? westernSpot * OZ_PER_KG * forex.INR * INDIA_DUTY_MULTIPLIER 
-        : 95000; // fallback ~₹95,000/kg
+      try {
+        const mcxResponse = await fetch(
+          'https://scanner.tradingview.com/symbol?symbol=MCX:SILVER1!&fields=close,change,change_abs&no_404=true',
+          { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MetalPrices/1.0)' } }
+        );
+        const mcxData = await mcxResponse.json();
+        if (mcxData.close && mcxData.close > 0) {
+          mcxPricePerKg = mcxData.close;
+          mcxSource = 'mcx';
+        }
+      } catch (e) {
+        // Fall back to calculated
+      }
+      
+      // MCX market hours: Mon-Fri 9:00 AM - 11:30 PM IST (UTC+5:30)
+      const now = new Date();
+      const istOffset = 5.5 * 60; // IST is UTC+5:30
+      const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const istMinutes = (utcMinutes + istOffset) % (24 * 60);
+      const istHours = istMinutes / 60;
+      const dayOfWeek = now.getUTCDay(); // 0=Sun, 6=Sat
+      
+      // MCX open: Mon-Fri, 9:00 (540 min) to 23:30 (1410 min) IST
+      const isMcxOpen = dayOfWeek >= 1 && dayOfWeek <= 5 && 
+                        istMinutes >= 540 && istMinutes <= 1410;
+      
+      // Fallback to calculated import parity if no real MCX data
+      if (!mcxPricePerKg) {
+        const INDIA_DUTY_MULTIPLIER = 1.105;  // 7.5% duty + 3% GST = 10.5%
+        mcxPricePerKg = westernSpot 
+          ? westernSpot * OZ_PER_KG * forex.INR * INDIA_DUTY_MULTIPLIER 
+          : 270000;
+      }
       
       const mcxPricePerGram = mcxPricePerKg / 1000;
       const mcxPricePerOz = mcxPricePerKg / OZ_PER_KG;
@@ -126,7 +155,7 @@ export default {
       // MCX premium over international spot (in USD terms)
       const mcxSpotEquivalent = mcxPricePerOz / forex.INR;
       const mcxPremium = westernSpot ? mcxSpotEquivalent - westernSpot : 0;
-      const mcxPremiumPercent = westernSpot ? (mcxPremium / westernSpot * 100) : 18;
+      const mcxPremiumPercent = westernSpot ? (mcxPremium / westernSpot * 100) : 10.5;
       
       // Copper: price is per pound, convert to per troy oz
       const copperPerOz = copperPrice / 14.583;
@@ -149,7 +178,9 @@ export default {
           inrPerGram: mcxPricePerGram.toFixed(2),
           usdPerOz: mcxSpotEquivalent.toFixed(2),
           premiumUsd: mcxPremium.toFixed(2),
-          premiumPercent: mcxPremiumPercent.toFixed(1)
+          premiumPercent: mcxPremiumPercent.toFixed(1),
+          source: mcxSource,
+          marketOpen: isMcxOpen
         },
         forex: {
           usdInr: forex.INR,
@@ -183,7 +214,7 @@ export default {
         shanghai: { usdPerOz: 88.0, cnyPerKg: 20500, cnyPerGram: 20.5 },
         western: { usdPerOz: 83.0 },
         premium: { usd: 5.0, percent: 6.0 },
-        india: { inrPerKg: 270000, inrPerGram: "270.00", usdPerOz: "92.50", premiumUsd: "9.50", premiumPercent: "10.5" },
+        india: { inrPerKg: 270000, inrPerGram: "270.00", usdPerOz: "92.50", premiumUsd: "9.50", premiumPercent: "10.5", source: "fallback", marketOpen: false },
         forex: { usdInr: 90.74, usdCny: 6.92, usdMyr: 3.92, usdAud: 1.40, usdEur: 0.842 },
         copper: { perLb: 4.50, perOz: 0.31 },
         timestamp: new Date().toISOString(),
