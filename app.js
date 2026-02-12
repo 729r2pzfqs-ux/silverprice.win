@@ -51,12 +51,14 @@ async function fetchPrices() {
         await fetchOtherMetals();
         fetchShanghaiSilver();
         updateUI();
+        if (chart) updateChart();
         updateLastUpdated();
         
     } catch (error) {
         console.error('Error:', error);
         await fetchFallbackPrices();
         updateUI();
+        if (chart) updateChart();
     }
 }
 
@@ -341,8 +343,8 @@ document.getElementById('calcAmount').addEventListener('input', updateCalculator
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
 // Init
-document.addEventListener('DOMContentLoaded', () => {
-    fetchPrices();
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchPrices();
     initChart();
     setInterval(fetchPrices, 60000);
 });
