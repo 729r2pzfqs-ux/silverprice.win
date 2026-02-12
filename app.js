@@ -8,7 +8,6 @@ let prices = {
     silver: { price: 0, change: 0, high: 0, low: 0 },
     platinum: { price: 0, change: 0, high: 0, low: 0 },
     palladium: { price: 0, change: 0, high: 0, low: 0 },
-    copper: { price: 0, change: 0, high: 0, low: 0 },
     shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 }
 };
 
@@ -21,8 +20,7 @@ const metalConfig = {
     gold: { name: 'Gold', code: 'XAU/USD', tvSymbol: 'TVC:GOLD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
     silver: { name: 'Silver', code: 'XAG/USD', tvSymbol: 'TVC:SILVER', color: '#C0C0C0', borderColor: 'border-slate-400/50', bgColor: 'bg-slate-400/20' },
     platinum: { name: 'Platinum', code: 'XPT/USD', tvSymbol: 'TVC:PLATINUM', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' },
-    palladium: { name: 'Palladium', code: 'XPD/USD', tvSymbol: 'TVC:PALLADIUM', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' },
-    copper: { name: 'Copper', code: 'HG/USD', tvSymbol: 'COMEX:HG1!', color: '#F97316', borderColor: 'border-orange-500/50', bgColor: 'bg-orange-500/20' }
+    palladium: { name: 'Palladium', code: 'XPD/USD', tvSymbol: 'TVC:PALLADIUM', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' }
 };
 
 // Fetch prices from goldprice.org
@@ -96,16 +94,6 @@ async function fetchOtherMetals() {
         prices.palladium = { price: 1700, change: 0, high: 1710, low: 1690 };
     }
     
-    // Copper - estimated (no free API with CORS)
-    // ~$4.50/lb, 1 lb = 14.583 troy oz
-    const copperPerLb = 4.50;
-    const copperPerOz = copperPerLb / 14.583;
-    prices.copper = {
-        price: copperPerOz,
-        change: 0,
-        high: copperPerOz * 1.01,
-        low: copperPerOz * 0.99
-    };
 }
 
 async function fetchFallbackPrices() {
@@ -113,7 +101,6 @@ async function fetchFallbackPrices() {
     prices.silver = { price: 82.6, change: -1.5, high: 83.5, low: 82 };
     prices.platinum = { price: 2122, change: -9, high: 2155, low: 2084 };
     prices.palladium = { price: 1697, change: -2, high: 1752, low: 1665 };
-    prices.copper = { price: 0.31, change: 0, high: 0.315, low: 0.305 };
     fetchShanghaiSilver();
 }
 
@@ -132,9 +119,6 @@ async function fetchShanghaiSilver() {
             prices.shanghai.premium = data.premium.percent;
         }
         
-        if (data.copper && data.copper.perOz > 0) {
-            prices.copper.price = data.copper.perOz;
-        }
         return;
     } catch (e) {
         console.log('Worker fallback:', e);
@@ -154,7 +138,7 @@ function selectMetal(metal) {
     selectedMetal = metal;
     
     // Update tabs
-    ['gold', 'silver', 'platinum', 'palladium', 'copper'].forEach(m => {
+    ['gold', 'silver', 'platinum', 'palladium'].forEach(m => {
         const tab = document.getElementById(`tab-${m}`);
         const config = metalConfig[m];
         if (m === metal) {
