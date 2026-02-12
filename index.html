@@ -59,12 +59,23 @@
                 <svg width="28" height="20" viewBox="0 0 28 20" fill="none"><rect x="2" y="4" width="24" height="12" rx="1" fill="#C0C0C0"/><rect x="4" y="6" width="20" height="8" rx="1" fill="#E8E8E8"/><rect x="6" y="8" width="16" height="4" fill="#F5F5F5"/></svg>
                 <h1 class="text-lg font-bold">SilverPrice<span class="text-slate-400">.win</span></h1>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="/blog.html" class="text-sm text-slate-400 hover:text-white">Blog</a>
-                <button onclick="toggleTheme()" id="themeToggle" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-lg">🌙</button>
-                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-sm">
+            <div class="flex items-center gap-2">
+                <a href="/blog.html" class="text-sm text-slate-400 hover:text-white hidden sm:inline">Blog</a>
+                <button onclick="toggleTheme()" id="themeToggle" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm">🌙</button>
+                <select id="language" class="bg-slate-800 border border-slate-700 rounded-lg px-1.5 py-1 text-xs">
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="hi">🇮🇳 हिंदी</option>
+                    <option value="ms">🇲🇾 BM</option>
+                    <option value="it">🇮🇹 IT</option>
+                    <option value="de">🇩🇪 DE</option>
+                    <option value="es">🇪🇸 ES</option>
+                </select>
+                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-1.5 py-1 text-xs">
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
+                    <option value="INR">INR</option>
+                    <option value="MYR">MYR</option>
+                    <option value="AUD">AUD</option>
                     <option value="GBP">GBP</option>
                 </select>
             </div>
@@ -218,7 +229,7 @@
 
         <!-- Quick Calculator -->
         <div class="metal-card rounded-2xl border border-slate-700/50 p-4">
-            <h3 class="font-semibold mb-3">Calculator</h3>
+            <h3 class="font-semibold mb-3" data-i18n="calculator">Calculator</h3>
             <div class="flex gap-2">
                 <input type="number" id="calcAmount" value="1" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
                 <select id="calcUnit" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm">
