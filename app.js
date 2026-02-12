@@ -248,12 +248,17 @@ function updateUI() {
         document.getElementById('shanghaiStatus').textContent = isOpen ? '🟢' : '🔴';
         
         // India MCX
+        const indiaUsdOz = prices.india.inrPerKg / OZ_PER_KG / prices.india.forex;
+        const indiaInrOz = prices.india.inrPerKg / OZ_PER_KG;
+        
         document.getElementById('indiaSpot').textContent = `$${prices.silver.price.toFixed(2)}`;
-        document.getElementById('indiaPrice').textContent = `₹${prices.india.inrPerGram.toFixed(2)}/g`;
+        document.getElementById('indiaPrice').textContent = `$${indiaUsdOz.toFixed(2)}/oz`;
         document.getElementById('indiaPremium').textContent = `+${prices.india.premiumPct.toFixed(0)}%`;
+        document.getElementById('indiaUsdOz').textContent = `$${indiaUsdOz.toFixed(2)}`;
+        document.getElementById('indiaInrOz').textContent = `₹${indiaInrOz.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
         document.getElementById('indiaInrGram').textContent = `₹${prices.india.inrPerGram.toFixed(2)}`;
-        document.getElementById('indiaInrKg').textContent = `₹${prices.india.inrPerKg.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
-        document.getElementById('indiaForex').textContent = prices.india.forex.toFixed(2);
+        document.getElementById('indiaInrKg').textContent = `₹${(prices.india.inrPerKg/1000).toFixed(0)}k`;
+        document.getElementById('indiaForex').textContent = prices.india.forex.toFixed(1);
     }
     
     updateCalculator();
