@@ -217,13 +217,25 @@ function updateLastUpdated() {
 // TradingView Chart
 function loadTradingViewChart() {
     const container = document.getElementById('tradingview-widget');
+    if (!container) return;
+    
     const config = metalConfig[selectedMetal];
     const theme = isDark ? 'dark' : 'light';
     
-    // Clear and create new widget container
-    container.innerHTML = '<div class="tradingview-widget-container" style="height:100%;width:100%;"><div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div></div>';
+    // Clear container completely
+    container.innerHTML = '';
     
-    // Create script for TradingView widget
+    // Create widget container
+    const widgetContainer = document.createElement('div');
+    widgetContainer.className = 'tradingview-widget-container';
+    widgetContainer.style.cssText = 'height:100%;width:100%;';
+    
+    const widgetInner = document.createElement('div');
+    widgetInner.className = 'tradingview-widget-container__widget';
+    widgetInner.style.cssText = 'height:100%;width:100%;';
+    widgetContainer.appendChild(widgetInner);
+    
+    // Create script
     const script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
@@ -244,7 +256,8 @@ function loadTradingViewChart() {
         "support_host": "https://www.tradingview.com"
     });
     
-    container.querySelector('.tradingview-widget-container').appendChild(script);
+    widgetContainer.appendChild(script);
+    container.appendChild(widgetContainer);
 }
 
 // Calculator
@@ -286,6 +299,7 @@ document.getElementById('calcUnit').addEventListener('change', updateCalculator)
 // Init
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchPrices();
-    loadTradingViewChart();
+    // Small delay to ensure container is ready
+    setTimeout(() => loadTradingViewChart(), 100);
     setInterval(fetchPrices, 60000);
 });
