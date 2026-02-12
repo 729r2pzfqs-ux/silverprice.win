@@ -116,11 +116,31 @@ async function fetchFallbackPrices() {
     fetchShanghaiSilver();
 }
 
-function fetchShanghaiSilver() {
+async function fetchShanghaiSilver() {
     const OZ_PER_KG = 1000 / TROY_OZ_TO_GRAM;
     const usdToCny = 7.24;
-    const premium = 1.06;
     
+    // Try Cloudflare Worker for real Shanghai + Copper data
+    try {
+        const response = await fetch('https://metal-prices-api.729r2pzfqs.workers.dev/');
+        const data = await response.json();
+        
+        if (data.shanghai && data.shanghai.usdPerOz > 0) {
+            prices.shanghai.usdPerOz = data.shanghai.usdPerOz;
+            prices.shanghai.cnyPerKg = data.shanghai.cnyPerKg;
+            prices.shanghai.premium = data.premium.percent;
+        }
+        
+        if (data.copper && data.copper.perOz > 0) {
+            prices.copper.price = data.copper.perOz;
+        }
+        return;
+    } catch (e) {
+        console.log('Worker fallback:', e);
+    }
+    
+    // Fallback: calculate from spot
+    const premium = 1.06;
     const spotUsdPerKg = prices.silver.price * OZ_PER_KG;
     const spotCnyPerKg = spotUsdPerKg * usdToCny;
     
