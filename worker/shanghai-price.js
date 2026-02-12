@@ -24,15 +24,15 @@ export default {
       });
       const shanghaiHtml = await shanghaiResponse.text();
       
-      // Fetch copper from CNBC
+      // Fetch copper from Kitco
       let copperPrice = 4.50; // fallback
       try {
-        const copperResponse = await fetch('https://www.cnbc.com/quotes/HG.1', {
+        const copperResponse = await fetch('https://www.kitco.com/price/base-metals/copper', {
           headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
         });
         const copperHtml = await copperResponse.text();
-        // Look for price in JSON data or page content
-        const copperMatch = copperHtml.match(/"last":"?([\d.]+)"?/);
+        // Extract from __NEXT_DATA__ JSON: "bid":5.97978...
+        const copperMatch = copperHtml.match(/"bid":([\d.]+)/);
         if (copperMatch) {
           copperPrice = parseFloat(copperMatch[1]);
         }
