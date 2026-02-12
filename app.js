@@ -240,7 +240,10 @@ function initChart() {
         height: 256,
         layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#94a3b8' },
         grid: { vertLines: { color: 'rgba(255,255,255,0.05)' }, horzLines: { color: 'rgba(255,255,255,0.05)' } },
-        rightPriceScale: { borderColor: 'rgba(255,255,255,0.1)' },
+        rightPriceScale: { 
+            borderColor: 'rgba(255,255,255,0.1)',
+            scaleMargins: { top: 0.15, bottom: 0.15 }  // Add padding so price isn't cut off
+        },
         timeScale: { borderColor: 'rgba(255,255,255,0.1)', timeVisible: true },
     });
     
@@ -266,19 +269,32 @@ function setTimeframe(tf) {
 function updateChart() {
     const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 168 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
     const basePrice = prices[selectedMetal].price || 100;
-    const volatility = selectedMetal === 'gold' ? 0.006 : selectedMetal === 'silver' ? 0.012 : selectedMetal === 'copper' ? 0.015 : 0.008;
+    const change = prices[selectedMetal].change || 0;
+    const volatility = selectedMetal === 'gold' ? 0.003 : selectedMetal === 'silver' ? 0.006 : selectedMetal === 'copper' ? 0.008 : 0.004;
     
     const candleData = [];
-    let price = basePrice * (1 - volatility * Math.min(points, 50) * 0.1);
     const now = Math.floor(Date.now() / 1000);
     const interval = currentTimeframe === '1D' || currentTimeframe === '1W' ? 3600 : 86400;
     
+    // Start price based on actual change (for 1D, use real change; longer = estimate)
+    const totalChange = currentTimeframe === '1D' ? change : change * (points / 24);
+    let price = basePrice - totalChange;
+    
+    // Generate smoother trend toward current price
     for (let i = 0; i < points; i++) {
+        const progress = i / (points - 1);
+        const targetPrice = (basePrice - totalChange) + (totalChange * progress);
+        
+        // Add small noise but keep trend direction
+        const noise = (Math.random() - 0.5) * volatility * basePrice;
         const open = price;
-        const change = (Math.random() - 0.48) * volatility * price;
-        const close = open + change;
-        const high = Math.max(open, close) + Math.random() * volatility * price * 0.3;
-        const low = Math.min(open, close) - Math.random() * volatility * price * 0.3;
+        const close = targetPrice + noise * 0.3;
+        
+        // Realistic high/low within 0.5% of candle body
+        const body = Math.abs(close - open);
+        const wick = Math.max(body * 0.3, basePrice * volatility * 0.2);
+        const high = Math.max(open, close) + Math.random() * wick;
+        const low = Math.min(open, close) - Math.random() * wick;
         
         candleData.push({
             time: now - (points - i) * interval,
@@ -287,6 +303,7 @@ function updateChart() {
         price = close;
     }
     
+    // Ensure last candle ends at current price
     if (candleData.length) {
         candleData[candleData.length - 1].close = basePrice;
     }
