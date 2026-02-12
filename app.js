@@ -1,6 +1,4 @@
-// Metal Prices App
-// Uses free APIs to fetch live precious metal prices
-
+// Metal Prices App - Single Metal View
 const TROY_OZ_TO_GRAM = 31.1035;
 const TROY_OZ_TO_KG = 0.0311035;
 
@@ -8,17 +6,23 @@ let prices = {
     gold: { price: 0, change: 0, high: 0, low: 0 },
     silver: { price: 0, change: 0, high: 0, low: 0 },
     platinum: { price: 0, change: 0, high: 0, low: 0 },
-    shanghai: { price: 0, change: 0 }
+    shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 }
 };
 
 let currentCurrency = 'USD';
 let currencyRates = { USD: 1, EUR: 0.92, GBP: 0.79 };
 let chart = null;
 let candlestickSeries = null;
-let currentChartMetal = 'gold';
+let selectedMetal = 'gold';
 let currentTimeframe = '1D';
 
-// Fetch metal prices from goldprice.org API
+const metalConfig = {
+    gold: { name: 'Gold', code: 'XAU/USD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
+    silver: { name: 'Silver', code: 'XAG/USD', color: '#C0C0C0', borderColor: 'border-slate-400/50', bgColor: 'bg-slate-400/20' },
+    platinum: { name: 'Platinum', code: 'XPT/USD', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' }
+};
+
+// Fetch prices from goldprice.org
 async function fetchPrices() {
     try {
         const response = await fetch('https://data-asg.goldprice.org/dbXRates/USD');
@@ -40,24 +44,20 @@ async function fetchPrices() {
             };
         }
         
-        // Fetch platinum separately (not in goldprice.org free API)
         await fetchPlatinum();
-        
+        fetchShanghaiSilver();
         updateUI();
         updateLastUpdated();
         
     } catch (error) {
-        console.error('Error fetching prices:', error);
+        console.error('Error:', error);
         await fetchFallbackPrices();
         updateUI();
     }
 }
 
-// Fetch platinum price
 async function fetchPlatinum() {
-    // Platinum typically trades around gold/5 ratio historically
-    // Using approximation based on current market
-    const platinumRatio = 0.20; // Platinum is roughly 20% of gold price
+    const platinumRatio = 0.20;
     prices.platinum = {
         price: prices.gold.price * platinumRatio,
         change: prices.gold.change * platinumRatio,
@@ -66,275 +66,165 @@ async function fetchPlatinum() {
     };
 }
 
-// Fallback/demo prices (2026 market levels)
 async function fetchFallbackPrices() {
-    const baseGold = 5068 + (Math.random() - 0.5) * 20;
-    const baseSilver = 82.60 + (Math.random() - 0.5) * 1;
-    const basePlatinum = 1015 + (Math.random() - 0.5) * 10;
-    
-    prices.gold = {
-        price: baseGold,
-        change: (Math.random() - 0.5) * 30,
-        high: baseGold + Math.random() * 15,
-        low: baseGold - Math.random() * 15
-    };
-    
-    prices.silver = {
-        price: baseSilver,
-        change: (Math.random() - 0.5) * 0.4,
-        high: baseSilver + Math.random() * 0.3,
-        low: baseSilver - Math.random() * 0.3
-    };
-    
-    prices.platinum = {
-        price: basePlatinum,
-        change: (Math.random() - 0.5) * 15,
-        high: basePlatinum + Math.random() * 10,
-        low: basePlatinum - Math.random() * 10
-    };
-    
-    const shanghaiBase = baseSilver * TROY_OZ_TO_GRAM * 1000 * 7.2;
-    prices.shanghai = {
-        price: shanghaiBase * (1 + Math.random() * 0.03),
-        change: (Math.random() - 0.5) * 50
-    };
+    prices.gold = { price: 5068, change: -5.7, high: 5080, low: 5050 };
+    prices.silver = { price: 82.6, change: -1.5, high: 83.5, low: 82 };
+    prices.platinum = { price: 1013, change: -1.1, high: 1020, low: 1005 };
+    fetchShanghaiSilver();
 }
 
-// Fetch Shanghai silver - simulates SGE Ag(T+D) pricing
-async function fetchShanghaiSilver() {
-    // Convert spot silver (USD/oz) to CNY/kg
-    // 1 kg = 32.1507 troy oz (1000g / 31.1035g per oz)
-    const OZ_PER_KG = 1000 / TROY_OZ_TO_GRAM; // ~32.15 oz per kg
-    const usdToCny = 7.24; // Current USD/CNY rate
-    
-    // Shanghai silver typically trades at 5-7% premium over Western spot
-    // This varies based on import demand, currency movements, etc.
-    const premium = 1.06; // ~6% premium (realistic for current market)
+function fetchShanghaiSilver() {
+    const OZ_PER_KG = 1000 / TROY_OZ_TO_GRAM;
+    const usdToCny = 7.24;
+    const premium = 1.06;
     
     const spotUsdPerKg = prices.silver.price * OZ_PER_KG;
     const spotCnyPerKg = spotUsdPerKg * usdToCny;
     
-    // Shanghai price in CNY/kg (with premium)
     prices.shanghai.cnyPerKg = spotCnyPerKg * premium;
-    
-    // Convert back to USD/oz for display
-    const shanghaiUsdPerKg = prices.shanghai.cnyPerKg / usdToCny;
-    prices.shanghai.usdPerOz = shanghaiUsdPerKg / OZ_PER_KG;
-    
+    prices.shanghai.usdPerOz = (prices.shanghai.cnyPerKg / usdToCny) / OZ_PER_KG;
     prices.shanghai.premium = (premium - 1) * 100;
 }
 
-// Update all UI elements
+function selectMetal(metal) {
+    selectedMetal = metal;
+    
+    // Update tabs
+    ['gold', 'silver', 'platinum'].forEach(m => {
+        const tab = document.getElementById(`tab-${m}`);
+        const config = metalConfig[m];
+        if (m === metal) {
+            tab.className = `metal-tab flex-1 py-3 px-4 rounded-xl ${config.bgColor} border-2 ${config.borderColor} active`;
+        } else {
+            tab.className = 'metal-tab flex-1 py-3 px-4 rounded-xl bg-slate-700/50 border-2 border-transparent';
+        }
+    });
+    
+    // Show/hide Shanghai section
+    document.getElementById('shanghaiSection').classList.toggle('hidden', metal !== 'silver');
+    
+    updateUI();
+    updateChart();
+}
+
 function updateUI() {
     const rate = currencyRates[currentCurrency];
     const symbol = currentCurrency === 'USD' ? '$' : currentCurrency === 'EUR' ? '€' : '£';
+    const data = prices[selectedMetal];
+    const config = metalConfig[selectedMetal];
     
-    updateMetalCard('gold', prices.gold, rate, symbol);
-    updateMetalCard('silver', prices.silver, rate, symbol);
-    updateMetalCard('platinum', prices.platinum, rate, symbol);
+    // Metal name and code
+    document.getElementById('metalName').textContent = config.name;
+    document.getElementById('metalCode').textContent = config.code;
     
-    // Shanghai Silver - with premium calculation
-    fetchShanghaiSilver();
+    // Price
+    const price = data.price * rate;
+    const change = data.change * rate;
+    const changePct = (data.change / (data.price - data.change)) * 100;
     
-    // Western spot price
-    const westernSpot = prices.silver.price;
-    document.getElementById('westernSpot').textContent = `$${westernSpot.toFixed(2)}`;
+    document.getElementById('metalPrice').textContent = `${symbol}${price.toFixed(2)}`;
     
-    // Shanghai price
-    document.getElementById('shanghaiPrice').textContent = `$${prices.shanghai.usdPerOz.toFixed(2)}`;
+    const changeEl = document.getElementById('metalChange');
+    changeEl.textContent = change >= 0 ? `+${symbol}${change.toFixed(2)}` : `${symbol}${change.toFixed(2)}`;
+    changeEl.className = `text-sm ${change >= 0 ? 'price-up' : 'price-down'}`;
     
-    // Premium calculation
-    const premiumUsd = prices.shanghai.usdPerOz - westernSpot;
-    const premiumPct = (premiumUsd / westernSpot) * 100;
-    document.getElementById('shanghaiPremium').textContent = `+$${premiumUsd.toFixed(2)}`;
-    document.getElementById('shanghaiPremiumPct').textContent = `(+${premiumPct.toFixed(1)}%)`;
+    const pctEl = document.getElementById('metalChangePct');
+    pctEl.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
+    pctEl.className = `text-xs px-2 py-0.5 rounded-full ${changePct >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
     
-    // Detail boxes
-    const cnyPerGram = prices.shanghai.cnyPerKg / 1000;
-    document.getElementById('shanghaiCnyGram').textContent = `¥${cnyPerGram.toFixed(2)}`;
-    document.getElementById('shanghaiCnyKg').textContent = `¥${prices.shanghai.cnyPerKg.toFixed(0)}`;
-    document.getElementById('shanghaiUsdKg').textContent = `$${(prices.shanghai.cnyPerKg / 7.2).toFixed(2)}`;
+    // Per gram/kg
+    document.getElementById('metalGram').textContent = `${symbol}${(price / TROY_OZ_TO_GRAM).toFixed(2)}`;
+    document.getElementById('metalKg').textContent = `${symbol}${(price / TROY_OZ_TO_KG).toFixed(0)}`;
+    document.getElementById('metalHigh').textContent = `${symbol}${(data.high * rate).toFixed(2)}`;
     
-    // Market status - SGE trading hours: 9:00-11:30, 13:30-15:30 Beijing time
-    const beijingHour = (new Date().getUTCHours() + 8) % 24;
-    const beijingMin = new Date().getUTCMinutes();
-    const beijingTime = beijingHour + beijingMin / 60;
-    const isOpen = (beijingTime >= 9 && beijingTime < 11.5) || (beijingTime >= 13.5 && beijingTime < 15.5);
-    document.getElementById('shanghaiStatus').textContent = isOpen ? '🟢 Open' : '🔴 Closed';
+    // Shanghai (only if silver)
+    if (selectedMetal === 'silver') {
+        document.getElementById('westernSpot').textContent = `$${prices.silver.price.toFixed(2)}`;
+        document.getElementById('shanghaiPrice').textContent = `$${prices.shanghai.usdPerOz.toFixed(2)}`;
+        
+        const premiumUsd = prices.shanghai.usdPerOz - prices.silver.price;
+        const premiumPct = (premiumUsd / prices.silver.price) * 100;
+        document.getElementById('shanghaiPremium').textContent = `+$${premiumUsd.toFixed(2)}`;
+        document.getElementById('shanghaiPremiumPct').textContent = `(+${premiumPct.toFixed(1)}%)`;
+        
+        const cnyPerGram = prices.shanghai.cnyPerKg / 1000;
+        document.getElementById('shanghaiCnyGram').textContent = `¥${cnyPerGram.toFixed(2)}`;
+        document.getElementById('shanghaiCnyKg').textContent = `¥${prices.shanghai.cnyPerKg.toFixed(0)}`;
+        document.getElementById('shanghaiUsdKg').textContent = `$${(prices.shanghai.cnyPerKg / 7.24).toFixed(0)}`;
+        
+        const beijingHour = (new Date().getUTCHours() + 8) % 24;
+        const beijingMin = new Date().getUTCMinutes();
+        const beijingTime = beijingHour + beijingMin / 60;
+        const isOpen = (beijingTime >= 9 && beijingTime < 11.5) || (beijingTime >= 13.5 && beijingTime < 15.5);
+        document.getElementById('shanghaiStatus').textContent = isOpen ? '🟢' : '🔴';
+    }
     
     updateCalculator();
 }
 
-function updateMetalCard(metal, data, rate, symbol) {
-    const price = data.price * rate;
-    const change = data.change * rate;
-    const changePercent = (data.change / (data.price - data.change)) * 100;
-    
-    document.getElementById(`${metal}Price`).textContent = `${symbol}${price.toFixed(2)}`;
-    
-    const changeEl = document.getElementById(`${metal}Change`);
-    changeEl.textContent = change >= 0 ? `+${symbol}${change.toFixed(2)}` : `${symbol}${change.toFixed(2)}`;
-    changeEl.className = `text-sm ${change >= 0 ? 'price-up' : 'price-down'}`;
-    
-    const percentEl = document.getElementById(`${metal}ChangePercent`);
-    percentEl.textContent = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
-    percentEl.className = `text-xs px-2 py-0.5 rounded-full ${changePercent >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
-    
-    document.getElementById(`${metal}Gram`).textContent = `${symbol}${(price / TROY_OZ_TO_GRAM).toFixed(2)}`;
-    document.getElementById(`${metal}Kg`).textContent = `${symbol}${(price / TROY_OZ_TO_KG).toFixed(0)}`;
-    document.getElementById(`${metal}High`).textContent = `${symbol}${(data.high * rate).toFixed(2)}`;
-}
-
 function updateLastUpdated() {
-    const now = new Date();
-    document.getElementById('lastUpdate').textContent = `Updated: ${now.toLocaleTimeString()}`;
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
-// Candlestick Chart with TradingView Lightweight Charts
+// Chart
 function initChart() {
     const container = document.getElementById('priceChart');
     
     chart = LightweightCharts.createChart(container, {
         width: container.clientWidth,
-        height: 320,
-        layout: {
-            background: { type: 'solid', color: 'transparent' },
-            textColor: '#94a3b8',
-        },
-        grid: {
-            vertLines: { color: 'rgba(255, 255, 255, 0.1)' },
-            horzLines: { color: 'rgba(255, 255, 255, 0.1)' },
-        },
-        crosshair: {
-            mode: LightweightCharts.CrosshairMode.Normal,
-        },
-        rightPriceScale: {
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-        },
-        timeScale: {
-            borderColor: 'rgba(255, 255, 255, 0.2)',
-            timeVisible: true,
-            secondsVisible: false,
-        },
+        height: 256,
+        layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#94a3b8' },
+        grid: { vertLines: { color: 'rgba(255,255,255,0.05)' }, horzLines: { color: 'rgba(255,255,255,0.05)' } },
+        rightPriceScale: { borderColor: 'rgba(255,255,255,0.1)' },
+        timeScale: { borderColor: 'rgba(255,255,255,0.1)', timeVisible: true },
     });
     
-    // Candlestick series
     candlestickSeries = chart.addCandlestickSeries({
-        upColor: '#22c55e',
-        downColor: '#ef4444',
-        borderDownColor: '#ef4444',
-        borderUpColor: '#22c55e',
-        wickDownColor: '#ef4444',
-        wickUpColor: '#22c55e',
+        upColor: '#22c55e', downColor: '#ef4444',
+        borderDownColor: '#ef4444', borderUpColor: '#22c55e',
+        wickDownColor: '#ef4444', wickUpColor: '#22c55e',
     });
     
-    // Handle resize
-    window.addEventListener('resize', () => {
-        chart.applyOptions({ width: container.clientWidth });
-    });
-    
-    updateChart();
-}
-
-function setChartMetal(metal) {
-    currentChartMetal = metal;
-    
-    document.querySelectorAll('.chart-btn').forEach(btn => {
-        btn.className = 'chart-btn px-3 py-1 text-sm rounded-lg hover:bg-slate-700';
-    });
-    
-    const btn = document.getElementById(`btn-${metal}`);
-    btn.className = `chart-btn px-3 py-1 text-sm rounded-lg border ${
-        metal === 'gold' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-        metal === 'silver' ? 'bg-slate-400/20 text-slate-300 border-slate-400/30' :
-        'bg-blue-500/20 text-blue-400 border-blue-500/30'
-    }`;
-    
+    window.addEventListener('resize', () => chart.applyOptions({ width: container.clientWidth }));
     updateChart();
 }
 
 function setTimeframe(tf) {
     currentTimeframe = tf;
-    
     document.querySelectorAll('.timeframe-btn').forEach(btn => {
         btn.className = 'timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700';
     });
     event.target.className = 'timeframe-btn px-3 py-1 text-xs rounded bg-slate-700';
-    
     updateChart();
 }
 
-function generateCandlestickData() {
-    const points = currentTimeframe === '1D' ? 24 : 
-                   currentTimeframe === '1W' ? 7 * 24 :
-                   currentTimeframe === '1M' ? 30 :
-                   currentTimeframe === '3M' ? 90 : 365;
-    
-    // Get base price with fallbacks
-    let basePrice;
-    if (currentChartMetal === 'gold') {
-        basePrice = prices.gold.price || 2650;
-    } else if (currentChartMetal === 'silver') {
-        basePrice = prices.silver.price || 31.5;
-    } else {
-        basePrice = prices.platinum.price || 1020;
-    }
-    
-    const volatility = currentChartMetal === 'gold' ? 0.008 :
-                       currentChartMetal === 'silver' ? 0.015 : 0.01;
+function updateChart() {
+    const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 168 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
+    const basePrice = prices[selectedMetal].price || 100;
+    const volatility = selectedMetal === 'gold' ? 0.006 : selectedMetal === 'silver' ? 0.012 : 0.008;
     
     const candleData = [];
-    
-    let currentPrice = basePrice * (1 - volatility * Math.min(points, 100) * 0.05);
+    let price = basePrice * (1 - volatility * Math.min(points, 50) * 0.1);
     const now = Math.floor(Date.now() / 1000);
-    
-    // Determine time interval based on timeframe
-    let interval;
-    if (currentTimeframe === '1D') {
-        interval = 3600; // 1 hour candles
-    } else if (currentTimeframe === '1W') {
-        interval = 3600; // 1 hour candles
-    } else {
-        interval = 86400; // Daily candles
-    }
+    const interval = currentTimeframe === '1D' || currentTimeframe === '1W' ? 3600 : 86400;
     
     for (let i = 0; i < points; i++) {
-        const time = now - (points - i) * interval;
-        
-        // Generate OHLC data
-        const open = currentPrice;
-        const change = (Math.random() - 0.48) * volatility * currentPrice;
+        const open = price;
+        const change = (Math.random() - 0.48) * volatility * price;
         const close = open + change;
-        const high = Math.max(open, close) + Math.random() * volatility * currentPrice * 0.5;
-        const low = Math.min(open, close) - Math.random() * volatility * currentPrice * 0.5;
-        
-        // Use appropriate decimal places based on metal
-        const decimals = currentChartMetal === 'silver' ? 3 : 2;
+        const high = Math.max(open, close) + Math.random() * volatility * price * 0.3;
+        const low = Math.min(open, close) - Math.random() * volatility * price * 0.3;
         
         candleData.push({
-            time: time,
-            open: parseFloat(open.toFixed(decimals)),
-            high: parseFloat(high.toFixed(decimals)),
-            low: parseFloat(low.toFixed(decimals)),
-            close: parseFloat(close.toFixed(decimals)),
+            time: now - (points - i) * interval,
+            open: +open.toFixed(2), high: +high.toFixed(2), low: +low.toFixed(2), close: +close.toFixed(2)
         });
-        
-        currentPrice = close;
+        price = close;
     }
     
-    // Ensure last candle ends at current price
-    if (candleData.length > 0) {
-        const last = candleData[candleData.length - 1];
-        last.close = basePrice;
-        last.high = Math.max(last.high, basePrice);
-        last.low = Math.min(last.low, basePrice);
+    if (candleData.length) {
+        candleData[candleData.length - 1].close = basePrice;
     }
-    
-    return candleData;
-}
-
-function updateChart() {
-    const candleData = generateCandlestickData();
     
     candlestickSeries.setData(candleData);
     chart.timeScale().fitContent();
@@ -342,46 +232,28 @@ function updateChart() {
 
 // Calculator
 function updateCalculator() {
-    const metal = document.getElementById('calcMetal').value;
     const amount = parseFloat(document.getElementById('calcAmount').value) || 0;
     const unit = document.getElementById('calcUnit').value;
+    const pricePerOz = prices[selectedMetal].price;
     
-    let pricePerOz = prices[metal].price;
     let value;
-    
-    switch (unit) {
-        case 'oz':
-            value = pricePerOz * amount;
-            break;
-        case 'gram':
-            value = (pricePerOz / TROY_OZ_TO_GRAM) * amount;
-            break;
-        case 'kg':
-            value = (pricePerOz / TROY_OZ_TO_KG) * amount;
-            break;
-    }
+    if (unit === 'oz') value = pricePerOz * amount;
+    else if (unit === 'gram') value = (pricePerOz / TROY_OZ_TO_GRAM) * amount;
+    else value = (pricePerOz / TROY_OZ_TO_KG) * amount;
     
     const rate = currencyRates[currentCurrency];
     const symbol = currentCurrency === 'USD' ? '$' : currentCurrency === 'EUR' ? '€' : '£';
-    
     document.getElementById('calcResult').textContent = `${symbol}${(value * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// Event listeners
-document.getElementById('currency').addEventListener('change', (e) => {
-    currentCurrency = e.target.value;
-    updateUI();
-});
-
-document.getElementById('calcMetal').addEventListener('change', updateCalculator);
+// Events
+document.getElementById('currency').addEventListener('change', e => { currentCurrency = e.target.value; updateUI(); });
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
-// Initialize
+// Init
 document.addEventListener('DOMContentLoaded', () => {
     fetchPrices();
     initChart();
-    
-    // Update prices every 60 seconds
     setInterval(fetchPrices, 60000);
 });

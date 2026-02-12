@@ -15,286 +15,176 @@
                 extend: {
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        gold: '#FFD700',
-                        silver: '#C0C0C0',
-                        platinum: '#E5E4E2',
                     }
                 }
             }
         }
     </script>
     <style>
-        .metal-card {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .shimmer {
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 2s infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+        .metal-card { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.05); }
         .price-up { color: #22c55e; }
         .price-down { color: #ef4444; }
+        .metal-tab { transition: all 0.2s; }
+        .metal-tab.active { transform: scale(1.02); }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen font-sans text-white">
     <!-- Header -->
     <header class="border-b border-slate-700/50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-                    <svg class="w-6 h-6 text-slate-900" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z"/>
-                        <path d="M10 4a1 1 0 011 1v4.586l2.707 2.707a1 1 0 01-1.414 1.414l-3-3A1 1 0 019 10V5a1 1 0 011-1z"/>
-                    </svg>
+        <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+                    <span class="text-sm">💰</span>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold">MetalPrices</h1>
-                    <p class="text-xs text-slate-400">Live Precious Metal Rates</p>
+                    <h1 class="text-lg font-bold">MetalPrices</h1>
                 </div>
             </div>
-            <div class="flex items-center gap-4">
-                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                    <option value="USD">USD $</option>
-                    <option value="EUR">EUR €</option>
-                    <option value="GBP">GBP £</option>
+            <div class="flex items-center gap-3">
+                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-sm">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
                 </select>
-                <div class="text-sm text-slate-400">
-                    <span id="lastUpdate">Loading...</span>
-                </div>
+                <span id="lastUpdate" class="text-xs text-slate-400"></span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        <!-- Price Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Gold Card -->
-            <div class="metal-card rounded-2xl border border-yellow-500/30 p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-                        <span class="text-xl">🥇</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold">Gold</h2>
-                        <p class="text-xs text-slate-400">XAU/USD</p>
-                    </div>
+    <main class="max-w-2xl mx-auto px-4 py-4">
+        <!-- Metal Selector Tabs -->
+        <div class="flex gap-2 mb-4">
+            <button onclick="selectMetal('gold')" id="tab-gold" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-yellow-500/20 border-2 border-yellow-500/50 active">
+                <div class="text-center">
+                    <span class="text-xl">🥇</span>
+                    <div class="text-sm font-medium mt-1">Gold</div>
                 </div>
-                <div class="mb-4">
-                    <div class="text-3xl font-bold" id="goldPrice">--</div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="goldChange" class="text-sm">--</span>
-                        <span id="goldChangePercent" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
-                    </div>
+            </button>
+            <button onclick="selectMetal('silver')" id="tab-silver" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center">
+                    <span class="text-xl">🥈</span>
+                    <div class="text-sm font-medium mt-1">Silver</div>
                 </div>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per gram</div>
-                        <div id="goldGram" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per kg</div>
-                        <div id="goldKg" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">24h high</div>
-                        <div id="goldHigh" class="font-medium">--</div>
-                    </div>
+            </button>
+            <button onclick="selectMetal('platinum')" id="tab-platinum" class="metal-tab flex-1 py-3 px-4 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center">
+                    <span class="text-xl">💎</span>
+                    <div class="text-sm font-medium mt-1">Platinum</div>
                 </div>
-            </div>
-
-            <!-- Silver Card -->
-            <div class="metal-card rounded-2xl border border-slate-400/30 p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-slate-400/10 rounded-full blur-3xl"></div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-slate-300 to-slate-500 flex items-center justify-center">
-                        <span class="text-xl">🥈</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold">Silver</h2>
-                        <p class="text-xs text-slate-400">XAG/USD</p>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <div class="text-3xl font-bold" id="silverPrice">--</div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="silverChange" class="text-sm">--</span>
-                        <span id="silverChangePercent" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per gram</div>
-                        <div id="silverGram" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per kg</div>
-                        <div id="silverKg" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">24h high</div>
-                        <div id="silverHigh" class="font-medium">--</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Platinum Card -->
-            <div class="metal-card rounded-2xl border border-blue-400/30 p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"></div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-200 to-blue-400 flex items-center justify-center">
-                        <span class="text-xl">💎</span>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-semibold">Platinum</h2>
-                        <p class="text-xs text-slate-400">XPT/USD</p>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <div class="text-3xl font-bold" id="platinumPrice">--</div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="platinumChange" class="text-sm">--</span>
-                        <span id="platinumChangePercent" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per gram</div>
-                        <div id="platinumGram" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">per kg</div>
-                        <div id="platinumKg" class="font-medium">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2">
-                        <div class="text-slate-400">24h high</div>
-                        <div id="platinumHigh" class="font-medium">--</div>
-                    </div>
-                </div>
-            </div>
+            </button>
         </div>
 
-        <!-- Shanghai Silver Section -->
-        <div class="metal-card rounded-2xl border border-red-500/30 p-6 mb-8">
+        <!-- Selected Metal Price Card -->
+        <div class="metal-card rounded-2xl border border-slate-700/50 p-5 mb-4">
             <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center">
-                        <span>🇨🇳</span>
+                <div>
+                    <h2 id="metalName" class="text-xl font-bold">Gold</h2>
+                    <p id="metalCode" class="text-sm text-slate-400">XAU/USD</p>
+                </div>
+                <div class="text-right">
+                    <div id="metalPrice" class="text-3xl font-bold">--</div>
+                    <div class="flex items-center justify-end gap-2 mt-1">
+                        <span id="metalChange" class="text-sm">--</span>
+                        <span id="metalChangePct" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-semibold">Shanghai Silver (Ag T+D)</h2>
-                        <p class="text-xs text-slate-400">SGE - Shanghai Gold Exchange</p>
-                    </div>
                 </div>
             </div>
             
-            <!-- Premium Display -->
-            <div class="grid grid-cols-2 gap-4 mb-4">
-                <div class="bg-slate-800/50 rounded-xl p-4 text-center">
-                    <div class="text-slate-400 text-xs mb-1">Western Spot</div>
-                    <div id="westernSpot" class="text-2xl font-bold">--</div>
-                    <div class="text-xs text-slate-400">USD/oz</div>
+            <div class="grid grid-cols-3 gap-3 text-center text-sm">
+                <div class="bg-slate-800/50 rounded-lg p-2">
+                    <div class="text-slate-400 text-xs">per gram</div>
+                    <div id="metalGram" class="font-medium">--</div>
                 </div>
-                <div class="bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl p-4 text-center border border-red-500/30">
-                    <div class="text-slate-400 text-xs mb-1">Shanghai Price</div>
-                    <div id="shanghaiPrice" class="text-2xl font-bold text-red-400">--</div>
-                    <div class="text-xs text-slate-400">USD/oz</div>
+                <div class="bg-slate-800/50 rounded-lg p-2">
+                    <div class="text-slate-400 text-xs">per kg</div>
+                    <div id="metalKg" class="font-medium">--</div>
                 </div>
-            </div>
-            
-            <!-- Premium Badge -->
-            <div class="flex justify-center mb-4">
-                <div class="bg-green-500/20 border border-green-500/30 rounded-full px-4 py-2 flex items-center gap-2">
-                    <span class="text-green-400 font-bold" id="shanghaiPremium">+$0.00</span>
-                    <span class="text-slate-400 text-sm">Premium</span>
-                    <span class="text-green-400 text-sm" id="shanghaiPremiumPct">(+0.0%)</span>
+                <div class="bg-slate-800/50 rounded-lg p-2">
+                    <div class="text-slate-400 text-xs">24h high</div>
+                    <div id="metalHigh" class="font-medium">--</div>
                 </div>
             </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                <div class="bg-slate-800/50 rounded-lg p-3">
-                    <div class="text-slate-400 text-xs">CNY/gram</div>
-                    <div id="shanghaiCnyGram" class="font-medium">--</div>
-                </div>
-                <div class="bg-slate-800/50 rounded-lg p-3">
-                    <div class="text-slate-400 text-xs">CNY/kg</div>
-                    <div id="shanghaiCnyKg" class="font-medium">--</div>
-                </div>
-                <div class="bg-slate-800/50 rounded-lg p-3">
-                    <div class="text-slate-400 text-xs">USD/kg</div>
-                    <div id="shanghaiUsdKg" class="font-medium">--</div>
-                </div>
-                <div class="bg-slate-800/50 rounded-lg p-3">
-                    <div class="text-slate-400 text-xs">Market Status</div>
-                    <div id="shanghaiStatus" class="font-medium">--</div>
-                </div>
-            </div>
-            <p class="text-xs text-slate-500 mt-3 text-center">Data: SGE Ag(T+D) contract • CNY converted at current rate</p>
         </div>
 
-        <!-- Chart Section -->
-        <div class="metal-card rounded-2xl border border-slate-700/50 p-6 mb-8">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold">Price Chart</h2>
-                <div class="flex gap-2">
-                    <button onclick="setChartMetal('gold')" id="btn-gold" class="chart-btn px-3 py-1 text-sm rounded-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">Gold</button>
-                    <button onclick="setChartMetal('silver')" id="btn-silver" class="chart-btn px-3 py-1 text-sm rounded-lg hover:bg-slate-700">Silver</button>
-                    <button onclick="setChartMetal('platinum')" id="btn-platinum" class="chart-btn px-3 py-1 text-sm rounded-lg hover:bg-slate-700">Platinum</button>
-                </div>
-            </div>
-            <div class="flex gap-2 mb-4">
+        <!-- Chart -->
+        <div class="metal-card rounded-2xl border border-slate-700/50 p-4 mb-4">
+            <div class="flex gap-2 mb-3">
                 <button onclick="setTimeframe('1D')" class="timeframe-btn px-3 py-1 text-xs rounded bg-slate-700">1D</button>
                 <button onclick="setTimeframe('1W')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1W</button>
                 <button onclick="setTimeframe('1M')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1M</button>
                 <button onclick="setTimeframe('3M')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">3M</button>
                 <button onclick="setTimeframe('1Y')" class="timeframe-btn px-3 py-1 text-xs rounded hover:bg-slate-700">1Y</button>
             </div>
-            <div class="h-80" id="priceChart"></div>
+            <div class="h-64" id="priceChart"></div>
         </div>
 
-        <!-- Conversion Calculator -->
-        <div class="metal-card rounded-2xl border border-slate-700/50 p-6">
-            <h2 class="text-lg font-semibold mb-4">Quick Calculator</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                    <label class="text-sm text-slate-400 mb-1 block">Metal</label>
-                    <select id="calcMetal" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                        <option value="gold">Gold</option>
-                        <option value="silver">Silver</option>
-                        <option value="platinum">Platinum</option>
-                    </select>
+        <!-- Shanghai Silver Section (only visible when silver selected) -->
+        <div id="shanghaiSection" class="metal-card rounded-2xl border border-red-500/30 p-4 mb-4 hidden">
+            <div class="flex items-center gap-2 mb-3">
+                <span>🇨🇳</span>
+                <h3 class="font-semibold">Shanghai Silver (Ag T+D)</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="bg-slate-800/50 rounded-xl p-3 text-center">
+                    <div class="text-slate-400 text-xs">Western Spot</div>
+                    <div id="westernSpot" class="text-xl font-bold">--</div>
                 </div>
-                <div>
-                    <label class="text-sm text-slate-400 mb-1 block">Amount</label>
-                    <input type="number" id="calcAmount" value="1" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                </div>
-                <div>
-                    <label class="text-sm text-slate-400 mb-1 block">Unit</label>
-                    <select id="calcUnit" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500">
-                        <option value="oz">Troy Ounce</option>
-                        <option value="gram">Gram</option>
-                        <option value="kg">Kilogram</option>
-                    </select>
+                <div class="bg-red-500/10 rounded-xl p-3 text-center border border-red-500/30">
+                    <div class="text-slate-400 text-xs">Shanghai</div>
+                    <div id="shanghaiPrice" class="text-xl font-bold text-red-400">--</div>
                 </div>
             </div>
-            <div class="mt-4 p-4 bg-slate-800/50 rounded-xl text-center">
-                <div class="text-slate-400 text-sm">Value</div>
-                <div id="calcResult" class="text-3xl font-bold text-yellow-400">$0.00</div>
+            
+            <div class="flex justify-center mb-3">
+                <div class="bg-green-500/20 border border-green-500/30 rounded-full px-3 py-1 text-sm">
+                    <span class="text-green-400 font-bold" id="shanghaiPremium">+$0</span>
+                    <span class="text-slate-400">Premium</span>
+                    <span class="text-green-400" id="shanghaiPremiumPct">(+0%)</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="bg-slate-800/50 rounded-lg p-2 text-center">
+                    <div class="text-slate-400">CNY/g</div>
+                    <div id="shanghaiCnyGram">--</div>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-2 text-center">
+                    <div class="text-slate-400">CNY/kg</div>
+                    <div id="shanghaiCnyKg">--</div>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-2 text-center">
+                    <div class="text-slate-400">USD/kg</div>
+                    <div id="shanghaiUsdKg">--</div>
+                </div>
+                <div class="bg-slate-800/50 rounded-lg p-2 text-center">
+                    <div class="text-slate-400">Status</div>
+                    <div id="shanghaiStatus">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Calculator -->
+        <div class="metal-card rounded-2xl border border-slate-700/50 p-4">
+            <h3 class="font-semibold mb-3">Calculator</h3>
+            <div class="flex gap-2">
+                <input type="number" id="calcAmount" value="1" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm">
+                <select id="calcUnit" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-2 text-sm">
+                    <option value="oz">oz</option>
+                    <option value="gram">gram</option>
+                    <option value="kg">kg</option>
+                </select>
+            </div>
+            <div class="mt-3 p-3 bg-slate-800/50 rounded-xl text-center">
+                <div id="calcResult" class="text-2xl font-bold text-yellow-400">$0.00</div>
             </div>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-700/50 mt-12">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
-            <p>Prices updated every 60 seconds. Data for informational purposes only.</p>
-            <p class="mt-1">© 2026 MetalPrices. All rights reserved.</p>
+    <footer class="border-t border-slate-700/50 mt-6">
+        <div class="max-w-2xl mx-auto px-4 py-4 text-center text-xs text-slate-500">
+            <p>Updated every 60s • Data for informational purposes</p>
         </div>
     </footer>
 
