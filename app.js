@@ -22,48 +22,33 @@ const metalConfig = {
     palladium: { name: 'Palladium', code: 'XPD/USD', tvSymbol: 'TVC:PALLADIUM', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' }
 };
 
-// Fetch prices from MetalpriceAPI
+// Fetch prices from Kitco (real-time!)
 async function fetchPrices() {
-    try {
-        const response = await fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${METALPRICE_API_KEY}&currencies=XAU,XAG,XPT,XPD`);
-        const data = await response.json();
-        
-        if (data && data.success && data.rates) {
-            prices.gold = {
-                price: data.rates.USDXAU || 0,
-                change: 0,
-                high: (data.rates.USDXAU || 0) * 1.005,
-                low: (data.rates.USDXAU || 0) * 0.995
-            };
-            prices.silver = {
-                price: data.rates.USDXAG || 0,
-                change: 0,
-                high: (data.rates.USDXAG || 0) * 1.005,
-                low: (data.rates.USDXAG || 0) * 0.995
-            };
-            prices.platinum = {
-                price: data.rates.USDXPT || 0,
-                change: 0,
-                high: (data.rates.USDXPT || 0) * 1.005,
-                low: (data.rates.USDXPT || 0) * 0.995
-            };
-            prices.palladium = {
-                price: data.rates.USDXPD || 0,
-                change: 0,
-                high: (data.rates.USDXPD || 0) * 1.005,
-                low: (data.rates.USDXPD || 0) * 0.995
-            };
+    const symbols = { gold: 'AU', silver: 'AG', platinum: 'PT', palladium: 'PD' };
+    
+    for (const [metal, symbol] of Object.entries(symbols)) {
+        try {
+            const response = await fetch(`https://proxy.kitco.com/getPM?symbol=${symbol}&currency=USD`);
+            const text = await response.text();
+            const parts = text.split(',');
+            // Format: symbol,currency,unit,timestamp,bid,ask,mid,change,changePct,low,high
+            if (parts.length >= 11) {
+                prices[metal] = {
+                    price: parseFloat(parts[4]) || 0,
+                    change: parseFloat(parts[7]) || 0,
+                    changePct: parseFloat(parts[8]) || 0,
+                    low: parseFloat(parts[9]) || 0,
+                    high: parseFloat(parts[10]) || 0
+                };
+            }
+        } catch (e) {
+            console.log(`Error fetching ${metal}:`, e);
         }
-        
-        fetchShanghaiSilver();
-        updateUI();
-        updateLastUpdated();
-        
-    } catch (error) {
-        console.error('Error:', error);
-        fetchFallbackPrices();
-        updateUI();
     }
+    
+    fetchShanghaiSilver();
+    updateUI();
+    updateLastUpdated();
 }
 
 function fetchFallbackPrices() {
@@ -137,22 +122,17 @@ function updateUI() {
     // Price
     const price = data.price * rate;
     const change = data.change * rate;
-    const changePct = data.price > 0 ? (data.change / data.price) * 100 : 0;
+    const changePct = data.changePct || 0;
     
     document.getElementById('metalPrice').textContent = `${symbol}${price.toFixed(2)}`;
     
     const changeEl = document.getElementById('metalChange');
-    changeEl.textContent = change >= 0 ? `+${symbol}${change.toFixed(2)}` : `${symbol}${change.toFixed(2)}`;
+    changeEl.textContent = change >= 0 ? `+${symbol}${Math.abs(change).toFixed(2)}` : `-${symbol}${Math.abs(change).toFixed(2)}`;
     changeEl.className = `text-sm ${change >= 0 ? 'price-up' : 'price-down'}`;
     
     const pctEl = document.getElementById('metalChangePct');
     pctEl.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
     pctEl.className = `text-xs px-2 py-0.5 rounded-full ${changePct >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
-    
-    // Per gram/kg
-    document.getElementById('metalGram').textContent = `${symbol}${(price / TROY_OZ_TO_GRAM).toFixed(2)}`;
-    document.getElementById('metalKg').textContent = `${symbol}${(price / TROY_OZ_TO_KG).toFixed(0)}`;
-    document.getElementById('metalHigh').textContent = `${symbol}${(data.high * rate).toFixed(2)}`;
     
     // Shanghai (only if silver)
     if (selectedMetal === 'silver') {
