@@ -9,14 +9,14 @@ const i18n = {
         gold: 'Gold', silver: 'Silver', platinum: 'Platinum', palladium: 'Palladium',
         calculator: 'Calculator', westernSpot: 'Western Spot', premium: 'Premium',
         shanghaiSilver: 'Shanghai Silver (Ag T+D)', indiaMcx: 'India MCX Silver',
-        intlSpot: 'International Spot', mcxPrice: 'MCX Price', includesDuty: 'includes duty + GST',
+        intlSpot: 'International Spot', mcxPrice: 'MCX Price', includesDuty: 'includes 7.5% duty + 3% GST',
         status: 'Status', duty: 'Duty', updated: 'Updated every 60s • Data for informational purposes'
     },
     hi: {
         gold: 'सोना', silver: 'चांदी', platinum: 'प्लैटिनम', palladium: 'पैलेडियम',
         calculator: 'कैलकुलेटर', westernSpot: 'पश्चिमी स्पॉट', premium: 'प्रीमियम',
         shanghaiSilver: 'शंघाई चांदी (Ag T+D)', indiaMcx: 'भारत MCX चांदी',
-        intlSpot: 'अंतर्राष्ट्रीय स्पॉट', mcxPrice: 'MCX कीमत', includesDuty: 'शुल्क + GST शामिल',
+        intlSpot: 'अंतर्राष्ट्रीय स्पॉट', mcxPrice: 'MCX कीमत', includesDuty: '7.5% शुल्क + 3% GST',
         status: 'स्थिति', duty: 'शुल्क', updated: 'हर 60 सेकंड में अपडेट • केवल सूचना के लिए'
     },
     ms: {

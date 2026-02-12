@@ -112,8 +112,8 @@ export default {
       
       // Calculate India MCX Silver price
       // MCX trades in ₹/kg
-      // Formula: Spot USD/oz × 32.15 oz/kg × USD/INR × 1.18 (15% import duty + 3% GST)
-      const INDIA_DUTY_MULTIPLIER = 1.18;
+      // Formula: Spot USD/oz × 32.15 oz/kg × USD/INR × 1.105 (7.5% import duty + 3% GST)
+      const INDIA_DUTY_MULTIPLIER = 1.105;  // 7.5% duty + 3% GST = 10.5%
       const OZ_PER_KG = 32.1507;
       
       const mcxPricePerKg = westernSpot 
@@ -183,7 +183,7 @@ export default {
         shanghai: { usdPerOz: 88.0, cnyPerKg: 20500, cnyPerGram: 20.5 },
         western: { usdPerOz: 83.0 },
         premium: { usd: 5.0, percent: 6.0 },
-        india: { inrPerKg: 95000, inrPerGram: 95.00, usdPerOz: 97.94, premiumUsd: 14.94, premiumPercent: 18.0 },
+        india: { inrPerKg: 270000, inrPerGram: "270.00", usdPerOz: "92.50", premiumUsd: "9.50", premiumPercent: "10.5" },
         forex: { usdInr: 90.74, usdCny: 6.92, usdMyr: 3.92, usdAud: 1.40, usdEur: 0.842 },
         copper: { perLb: 4.50, perOz: 0.31 },
         timestamp: new Date().toISOString(),
