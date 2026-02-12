@@ -1,4 +1,4 @@
-// Cloudflare Worker for Shanghai Silver Price
+// Cloudflare Worker for Shanghai Silver + Copper Prices
 // Deploy to: workers.cloudflare.com
 
 export default {
@@ -18,14 +18,29 @@ export default {
     }
 
     try {
-      // Fetch goldsilver.ai Shanghai silver page
-      const response = await fetch('https://goldsilver.ai/metal-prices/shanghai-silver-price', {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; MetalPrices/1.0)'
-        }
+      // Fetch Shanghai silver from goldsilver.ai
+      const shanghaiResponse = await fetch('https://goldsilver.ai/metal-prices/shanghai-silver-price', {
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; MetalPrices/1.0)' }
       });
+      const shanghaiHtml = await shanghaiResponse.text();
       
-      const html = await response.text();
+      // Fetch copper from CNBC
+      let copperPrice = 4.50; // fallback
+      try {
+        const copperResponse = await fetch('https://www.cnbc.com/quotes/HG.1', {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+        });
+        const copperHtml = await copperResponse.text();
+        // Look for price in JSON data or page content
+        const copperMatch = copperHtml.match(/"last":"?([\d.]+)"?/);
+        if (copperMatch) {
+          copperPrice = parseFloat(copperMatch[1]);
+        }
+      } catch (e) {
+        // Keep fallback
+      }
+      
+      const html = shanghaiHtml;
       
       // Parse the price from the page
       // Looking for patterns like "88.64USD/OZ" and "$83.62" (western spot)
@@ -64,6 +79,10 @@ export default {
         premium = shanghaiPrice - westernSpot;
       }
       
+      // Copper: price is per pound, convert to per troy oz
+      // 1 pound = 14.583 troy oz
+      const copperPerOz = copperPrice / 14.583;
+      
       const data = {
         shanghai: {
           usdPerOz: shanghaiPrice || 88.0,
@@ -77,8 +96,12 @@ export default {
           usd: premium || 5.0,
           percent: westernSpot ? ((premium || 5.0) / westernSpot * 100) : 6.0
         },
+        copper: {
+          perLb: copperPrice,
+          perOz: copperPerOz
+        },
         timestamp: new Date().toISOString(),
-        source: 'goldsilver.ai'
+        source: 'goldsilver.ai + cnbc'
       };
 
       return new Response(JSON.stringify(data), { headers: corsHeaders });
@@ -89,6 +112,7 @@ export default {
         shanghai: { usdPerOz: 88.0, cnyPerKg: 20500, cnyPerGram: 20.5 },
         western: { usdPerOz: 83.0 },
         premium: { usd: 5.0, percent: 6.0 },
+        copper: { perLb: 4.50, perOz: 0.31 },
         timestamp: new Date().toISOString(),
         source: 'fallback',
         error: error.message
