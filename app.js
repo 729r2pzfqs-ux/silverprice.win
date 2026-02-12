@@ -273,6 +273,32 @@ function updateCalculator() {
     document.getElementById('calcResult').textContent = `${symbol}${(value * rate).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+// Theme toggle
+let isDark = true;
+function toggleTheme() {
+    isDark = !isDark;
+    document.body.classList.toggle('light', !isDark);
+    document.getElementById('themeToggle').textContent = isDark ? '🌙' : '☀️';
+    
+    // Update chart colors
+    if (chart) {
+        chart.applyOptions({
+            layout: { textColor: isDark ? '#94a3b8' : '#475569' },
+            grid: {
+                vertLines: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+                horzLines: { color: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }
+            }
+        });
+    }
+    
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Load saved theme
+if (localStorage.getItem('theme') === 'light') {
+    toggleTheme();
+}
+
 // Events
 document.getElementById('currency').addEventListener('change', e => { currentCurrency = e.target.value; updateUI(); });
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);

@@ -26,6 +26,16 @@
         .price-down { color: #ef4444; }
         .metal-tab { transition: all 0.2s; }
         .metal-tab.active { transform: scale(1.02); }
+        
+        /* Light mode */
+        .light { background: linear-gradient(to bottom right, #f8fafc, #e2e8f0, #f1f5f9) !important; color: #1e293b !important; }
+        .light .metal-card { background: rgba(255,255,255,0.8) !important; border-color: rgba(0,0,0,0.1) !important; }
+        .light .bg-slate-700\/50, .light .bg-slate-800, .light .bg-slate-800\/50 { background: rgba(241,245,249,0.9) !important; }
+        .light .border-slate-700, .light .border-slate-700\/50 { border-color: rgba(0,0,0,0.1) !important; }
+        .light .text-slate-400, .light .text-slate-500 { color: #64748b !important; }
+        .light select, .light input { background: #f1f5f9 !important; border-color: #cbd5e1 !important; color: #1e293b !important; }
+        .light .text-white { color: #1e293b !important; }
+        .light header, .light footer { border-color: rgba(0,0,0,0.1) !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen font-sans text-white">
@@ -40,13 +50,13 @@
                     <h1 class="text-lg font-bold">MetalPrices</h1>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <button onclick="toggleTheme()" id="themeToggle" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-lg">🌙</button>
                 <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-sm">
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
                     <option value="GBP">GBP</option>
                 </select>
-                <span id="lastUpdate" class="text-xs text-slate-400"></span>
             </div>
         </div>
     </header>
