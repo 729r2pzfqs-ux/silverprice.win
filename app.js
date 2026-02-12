@@ -57,7 +57,7 @@ let prices = {
     platinum: { price: 0, change: 0, high: 0, low: 0 },
     palladium: { price: 0, change: 0, high: 0, low: 0 },
     shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 },
-    india: { inrPerKg: 0, inrPerGram: 0, premiumPct: 18, forex: 90.74 }
+    india: { inrPerKg: 0, inrPerGram: 0, premiumPct: 10.5, forex: 90.74, source: 'calculated', marketOpen: false }
 };
 
 let currentCurrency = 'USD';
@@ -155,6 +155,8 @@ async function fetchRegionalPrices() {
             prices.india.inrPerGram = parseFloat(data.india.inrPerGram);
             prices.india.premiumPct = parseFloat(data.india.premiumPercent);
             prices.india.forex = data.forex?.usdInr || 90.74;
+            prices.india.source = data.india.source || 'calculated';
+            prices.india.marketOpen = data.india.marketOpen || false;
         }
         return;
     } catch (e) {
@@ -253,12 +255,17 @@ function updateUI() {
         
         document.getElementById('indiaSpot').textContent = `$${prices.silver.price.toFixed(2)}`;
         document.getElementById('indiaPrice').textContent = `$${indiaUsdOz.toFixed(2)}/oz`;
-        document.getElementById('indiaPremium').textContent = `+${prices.india.premiumPct.toFixed(0)}%`;
+        document.getElementById('indiaPremium').textContent = `${prices.india.premiumPct >= 0 ? '+' : ''}${prices.india.premiumPct.toFixed(1)}%`;
         document.getElementById('indiaUsdOz').textContent = `$${indiaUsdOz.toFixed(2)}`;
         document.getElementById('indiaInrOz').textContent = `₹${indiaInrOz.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
         document.getElementById('indiaInrGram').textContent = `₹${prices.india.inrPerGram.toFixed(2)}`;
         document.getElementById('indiaInrKg').textContent = `₹${(prices.india.inrPerKg/1000).toFixed(0)}k`;
         document.getElementById('indiaForex').textContent = prices.india.forex.toFixed(1);
+        
+        // MCX market status
+        const mcxOpen = prices.india.marketOpen;
+        document.getElementById('indiaMcxStatus').textContent = mcxOpen ? '🟢' : '🔴';
+        document.getElementById('indiaMcxStatusText').textContent = mcxOpen ? 'Open' : 'Closed';
     }
     
     updateCalculator();
