@@ -348,8 +348,11 @@ document.getElementById('language')?.addEventListener('change', e => {
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
-// Detect browser language
+// Detect language from page, localStorage, or browser
 function detectLanguage() {
+    // Page-specific language takes priority (set by language subpages)
+    if (window.pageLang && i18n[window.pageLang]) return window.pageLang;
+    
     const saved = localStorage.getItem('lang');
     if (saved && i18n[saved]) return saved;
     

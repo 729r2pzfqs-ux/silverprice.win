@@ -99,6 +99,12 @@ def update_html_for_lang(html, lang):
         html = html.replace('href="/blog.html"', 'href="/blog.html"')
         html = html.replace('href="blog.html"', 'href="../blog.html"')
     
+    # Add script to set language BEFORE app.js loads
+    lang_script = f'''<script>window.pageLang = '{lang}';</script>
+    <script src="'''
+    html = html.replace('<script src="app.js">', lang_script + 'app.js">')
+    html = html.replace('<script src="../app.js">', lang_script + '../app.js">')
+    
     # Add JS for dropdown toggle
     dropdown_js = '''
     <script>
