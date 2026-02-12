@@ -19,6 +19,14 @@
     <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
     <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
     <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
+    <link rel="alternate" hreflang="x-default" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="en" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/" />
+    <link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/" />
+    <link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/" />
+    <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
+    <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
+    <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
     <title>SilverPrice.win - Precios de Plata, Oro y Metales en Vivo</title>
     <meta name="description" content="Precios de metales preciosos en vivo - Plata, Oro, Platino, Paladio. Precios spot en tiempo real, gráficos y prima de plata de Shanghái.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='16' rx='2' fill='%23C0C0C0'/%3E%3Crect x='6' y='10' width='20' height='12' rx='1' fill='%23E8E8E8'/%3E%3Crect x='8' y='13' width='16' height='6' fill='%23F5F5F5'/%3E%3C/svg%3E">
@@ -72,15 +80,15 @@
                 <button onclick="toggleTheme()" id="themeToggle" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm">🌙</button>
                 <div class="lang-dropdown relative">
                     <button id="langBtn" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs flex items-center gap-1">
-                        🇪🇸 ES <span class="text-xs">▼</span>
+                        🇬🇧 EN <span class="text-xs">▼</span>
                     </button>
                     <div id="langMenu" class="hidden absolute right-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg py-1 z-50 min-w-[80px]">
-                        <a href="/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇬🇧 EN</a>
+                        <a href="/" class="block px-3 py-1 text-xs bg-slate-700">🇬🇧 EN</a>
                         <a href="/zh/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇨🇳 ZH</a>
                         <a href="/hi/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇮🇳 HI</a>
                         <a href="/ms/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇲🇾 MS</a>
                         <a href="/de/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇩🇪 DE</a>
-                        <a href="/es/" class="block px-3 py-1 text-xs bg-slate-700">🇪🇸 ES</a>
+                        <a href="/es/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇪🇸 ES</a>
                         <a href="/it/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇮🇹 IT</a>
                     </div>
                 </div>
@@ -278,7 +286,19 @@
         </div>
     </footer>
 
+    <script>window.pageLang = 'es';</script>
     <script src="../app.js"></script>
+
+    <script>
+        // Language dropdown toggle
+        document.getElementById('langBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('langMenu').classList.toggle('hidden');
+        });
+        document.addEventListener('click', function() {
+            document.getElementById('langMenu')?.classList.add('hidden');
+        });
+    </script>
 
     <script>
         // Language dropdown toggle
