@@ -236,15 +236,31 @@ function loadTradingViewChart() {
     const config = metalConfig[selectedMetal];
     const theme = isDark ? 'dark' : 'light';
     
-    // Use TradingView's mini chart widget (more reliable)
-    container.innerHTML = `
-        <iframe 
-            src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview-widget&symbol=${config.tvSymbol}&interval=60&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=f1f3f6&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=0&width=100%25&height=100%25"
-            style="width: 100%; height: 100%; border: none;"
-            allowtransparency="true"
-            frameborder="0"
-        ></iframe>
-    `;
+    // Clear and create new widget container
+    container.innerHTML = '<div class="tradingview-widget-container" style="height:100%;width:100%;"><div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div></div>';
+    
+    // Create script for TradingView widget
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+        "autosize": true,
+        "symbol": config.tvSymbol,
+        "interval": "60",
+        "timezone": "Etc/UTC",
+        "theme": theme,
+        "style": "1",
+        "locale": "en",
+        "hide_top_toolbar": false,
+        "hide_legend": false,
+        "allow_symbol_change": false,
+        "save_image": false,
+        "calendar": false,
+        "support_host": "https://www.tradingview.com"
+    });
+    
+    container.querySelector('.tradingview-widget-container').appendChild(script);
 }
 
 // Calculator
