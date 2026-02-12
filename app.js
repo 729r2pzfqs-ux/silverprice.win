@@ -340,7 +340,7 @@ document.getElementById('currency').addEventListener('change', e => {
     localStorage.setItem('currency', currentCurrency);
     updateUI(); 
 });
-document.getElementById('language').addEventListener('change', e => { 
+document.getElementById('language')?.addEventListener('change', e => { 
     currentLang = e.target.value; 
     localStorage.setItem('lang', currentLang);
     applyTranslations();
@@ -362,7 +362,8 @@ function detectLanguage() {
 document.addEventListener('DOMContentLoaded', async () => {
     // Load saved preferences
     currentLang = detectLanguage();
-    document.getElementById('language').value = currentLang;
+    const langSelect = document.getElementById('language');
+    if (langSelect) langSelect.value = currentLang;
     
     const savedCurrency = localStorage.getItem('currency');
     if (savedCurrency) {
