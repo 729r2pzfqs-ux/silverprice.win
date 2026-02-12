@@ -77,8 +77,11 @@ function applyTranslations() {
     document.querySelector('#tab-platinum .text-xs').textContent = t('platinum');
     document.querySelector('#tab-palladium .text-xs').textContent = t('palladium');
     
-    // Calculator
-    document.querySelector('[data-i18n="calculator"]').textContent = t('calculator');
+    // All elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+    });
     
     // Footer
     document.querySelector('footer p').textContent = t('updated');
