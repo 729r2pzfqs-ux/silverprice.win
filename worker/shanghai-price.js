@@ -1,5 +1,9 @@
 // Cloudflare Worker for Shanghai Silver + Copper Prices
 // Deploy to: workers.cloudflare.com
+// Requires KV namespace "CACHE" bound to the worker
+
+const CACHE_KEY = 'metal_prices';
+const CACHE_TTL = 300; // 5 minutes
 
 export default {
   async fetch(request, env, ctx) {
@@ -9,12 +13,26 @@ export default {
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
       'Content-Type': 'application/json',
-      'Cache-Control': 'max-age=60' // Cache for 1 minute
+      'Cache-Control': 'max-age=60'
     };
 
     // Handle preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
+    }
+
+    // Check KV cache first (if KV is bound)
+    if (env.CACHE) {
+      try {
+        const cached = await env.CACHE.get(CACHE_KEY);
+        if (cached) {
+          const data = JSON.parse(cached);
+          data.cached = true;
+          return new Response(JSON.stringify(data), { headers: corsHeaders });
+        }
+      } catch (e) {
+        // KV read failed, continue to fetch fresh
+      }
     }
 
     try {
@@ -103,6 +121,15 @@ export default {
         timestamp: new Date().toISOString(),
         source: 'goldsilver.ai + cnbc'
       };
+
+      // Store in KV cache (if KV is bound)
+      if (env.CACHE) {
+        try {
+          await env.CACHE.put(CACHE_KEY, JSON.stringify(data), { expirationTtl: CACHE_TTL });
+        } catch (e) {
+          // KV write failed, continue anyway
+        }
+      }
 
       return new Response(JSON.stringify(data), { headers: corsHeaders });
       
