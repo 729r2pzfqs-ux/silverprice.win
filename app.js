@@ -275,8 +275,8 @@ async function updateChart() {
     const symbol = metalSymbols[selectedMetal];
     const basePrice = prices[selectedMetal].price || 100;
     
-    // For copper, use simulated data (no API coverage)
-    if (selectedMetal === 'copper') {
+    // For copper or 1D view, use simulated (API has no intraday data)
+    if (selectedMetal === 'copper' || currentTimeframe === '1D') {
         updateChartSimulated();
         return;
     }
@@ -294,7 +294,7 @@ async function updateChart() {
     
     try {
         // Calculate date range (max 5 days for free tier)
-        const days = currentTimeframe === '1D' ? 1 : currentTimeframe === '1W' ? 5 : 5;
+        const days = currentTimeframe === '1W' ? 5 : 5;
         const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setDate(startDate.getDate() - days);
@@ -308,8 +308,9 @@ async function updateChart() {
             date.setDate(date.getDate() + i);
             const dateStr = formatDate(date);
             
-            // Skip future dates
-            if (date > endDate) continue;
+            // Skip future dates and today (incomplete candle)
+            const today = formatDate(endDate);
+            if (date > endDate || dateStr === today) continue;
             
             try {
                 const ohlcUrl = `https://api.metalpriceapi.com/v1/ohlc?api_key=${METALPRICE_API_KEY}&base=${symbol}&currency=USD&date=${dateStr}`;
@@ -330,7 +331,17 @@ async function updateChart() {
             }
         }
         
-        if (candleData.length > 0) {
+        // Add today's partial candle from live data
+        const todayOpen = candleData.length > 0 ? candleData[candleData.length - 1].close : basePrice;
+        candleData.push({
+            time: Math.floor(new Date().setHours(0,0,0,0) / 1000),
+            open: todayOpen,
+            high: Math.max(todayOpen, basePrice) * 1.002,
+            low: Math.min(todayOpen, basePrice) * 0.998,
+            close: basePrice
+        });
+        
+        if (candleData.length > 1) {
             // Cache the result
             historicalCache[cacheKey] = { data: candleData, time: now };
             candlestickSeries.setData(candleData);
