@@ -214,7 +214,7 @@ function updateLastUpdated() {
     document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
-// TradingView Chart
+// TradingView Chart - Simple iframe embed (most reliable)
 function loadTradingViewChart() {
     const container = document.getElementById('tradingview-widget');
     if (!container) return;
@@ -222,42 +222,14 @@ function loadTradingViewChart() {
     const config = metalConfig[selectedMetal];
     const theme = isDark ? 'dark' : 'light';
     
-    // Clear container completely
-    container.innerHTML = '';
-    
-    // Create widget container
-    const widgetContainer = document.createElement('div');
-    widgetContainer.className = 'tradingview-widget-container';
-    widgetContainer.style.cssText = 'height:100%;width:100%;';
-    
-    const widgetInner = document.createElement('div');
-    widgetInner.className = 'tradingview-widget-container__widget';
-    widgetInner.style.cssText = 'height:100%;width:100%;';
-    widgetContainer.appendChild(widgetInner);
-    
-    // Create script
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-        "autosize": true,
-        "symbol": config.tvSymbol,
-        "interval": "60",
-        "timezone": "Etc/UTC",
-        "theme": theme,
-        "style": "1",
-        "locale": "en",
-        "hide_top_toolbar": false,
-        "hide_legend": false,
-        "allow_symbol_change": false,
-        "save_image": false,
-        "calendar": false,
-        "support_host": "https://www.tradingview.com"
-    });
-    
-    widgetContainer.appendChild(script);
-    container.appendChild(widgetContainer);
+    // Simple iframe embed - works immediately
+    container.innerHTML = `<iframe 
+        src="https://www.tradingview.com/widgetembed/?symbol=${config.tvSymbol}&interval=60&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=000000&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"
+        style="width:100%;height:100%;border:none;"
+        allowtransparency="true"
+        frameborder="0"
+        allowfullscreen
+    ></iframe>`;
 }
 
 // Calculator
@@ -296,10 +268,9 @@ document.getElementById('currency').addEventListener('change', e => { currentCur
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
-// Init - use window.onload to ensure everything is ready
-window.addEventListener('load', async () => {
+// Init
+document.addEventListener('DOMContentLoaded', async () => {
+    loadTradingViewChart();  // Load chart immediately
     await fetchPrices();
-    // Longer delay to ensure DOM is fully painted
-    setTimeout(() => loadTradingViewChart(), 500);
     setInterval(fetchPrices, 60000);
 });
