@@ -1,14 +1,15 @@
 // Metal Prices App - Single Metal View
 const TROY_OZ_TO_GRAM = 31.1035;
 const TROY_OZ_TO_KG = 0.0311035;
-const METALPRICE_API_KEY = '0ae37d0957a3c6802e2ec39d9c1a939c';
+const OZ_PER_KG = 32.1507;
 
 let prices = {
     gold: { price: 0, change: 0, high: 0, low: 0 },
     silver: { price: 0, change: 0, high: 0, low: 0 },
     platinum: { price: 0, change: 0, high: 0, low: 0 },
     palladium: { price: 0, change: 0, high: 0, low: 0 },
-    shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 }
+    shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 },
+    india: { inrPerKg: 0, inrPerGram: 0, premiumPct: 18, forex: 90.74 }
 };
 
 let currentCurrency = 'USD';
@@ -46,7 +47,7 @@ async function fetchPrices() {
         }
     }
     
-    fetchShanghaiSilver();
+    fetchRegionalPrices();
     updateUI();
     updateLastUpdated();
 }
@@ -56,22 +57,30 @@ function fetchFallbackPrices() {
     prices.silver = { price: 81.65, change: 0, high: 82.5, low: 81 };
     prices.platinum = { price: 2107, change: 0, high: 2120, low: 2090 };
     prices.palladium = { price: 1722, change: 0, high: 1740, low: 1700 };
-    fetchShanghaiSilver();
+    fetchRegionalPrices();
 }
 
-async function fetchShanghaiSilver() {
-    const OZ_PER_KG = 1000 / TROY_OZ_TO_GRAM;
+async function fetchRegionalPrices() {
     const usdToCny = 7.24;
     
-    // Try Cloudflare Worker for real Shanghai data
+    // Try Cloudflare Worker for Shanghai + India data
     try {
         const response = await fetch('https://metal-prices-api.729r2pzfqs.workers.dev/');
         const data = await response.json();
         
+        // Shanghai
         if (data.shanghai && data.shanghai.usdPerOz > 0) {
             prices.shanghai.usdPerOz = data.shanghai.usdPerOz;
             prices.shanghai.cnyPerKg = data.shanghai.cnyPerKg;
             prices.shanghai.premium = data.premium.percent;
+        }
+        
+        // India MCX
+        if (data.india) {
+            prices.india.inrPerKg = data.india.inrPerKg;
+            prices.india.inrPerGram = parseFloat(data.india.inrPerGram);
+            prices.india.premiumPct = parseFloat(data.india.premiumPercent);
+            prices.india.forex = data.forex?.usdInr || 90.74;
         }
         return;
     } catch (e) {
@@ -86,6 +95,12 @@ async function fetchShanghaiSilver() {
     prices.shanghai.cnyPerKg = spotCnyPerKg * premium;
     prices.shanghai.usdPerOz = (prices.shanghai.cnyPerKg / usdToCny) / OZ_PER_KG;
     prices.shanghai.premium = (premium - 1) * 100;
+    
+    // India fallback (18% duty+GST)
+    const indiaDuty = 1.18;
+    prices.india.inrPerKg = prices.silver.price * OZ_PER_KG * prices.india.forex * indiaDuty;
+    prices.india.inrPerGram = prices.india.inrPerKg / 1000;
+    prices.india.premiumPct = 18;
 }
 
 function selectMetal(metal) {
@@ -102,8 +117,8 @@ function selectMetal(metal) {
         }
     });
     
-    // Show/hide Shanghai section
-    document.getElementById('shanghaiSection').classList.toggle('hidden', metal !== 'silver');
+    // Show/hide regional section (Shanghai + India)
+    document.getElementById('regionalSection').classList.toggle('hidden', metal !== 'silver');
     
     updateUI();
     loadTradingViewChart();
@@ -134,8 +149,9 @@ function updateUI() {
     pctEl.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
     pctEl.className = `text-xs px-2 py-0.5 rounded-full ${changePct >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
     
-    // Shanghai (only if silver)
+    // Regional premiums (only if silver)
     if (selectedMetal === 'silver') {
+        // Shanghai
         document.getElementById('westernSpot').textContent = `$${prices.silver.price.toFixed(2)}`;
         document.getElementById('shanghaiPrice').textContent = `$${prices.shanghai.usdPerOz.toFixed(2)}`;
         
@@ -149,18 +165,28 @@ function updateUI() {
         document.getElementById('shanghaiCnyKg').textContent = `¥${prices.shanghai.cnyPerKg.toFixed(0)}`;
         document.getElementById('shanghaiUsdKg').textContent = `$${(prices.shanghai.cnyPerKg / 7.24).toFixed(0)}`;
         
+        // Shanghai market status (09:00-11:30, 13:30-15:30 Beijing time)
         const beijingHour = (new Date().getUTCHours() + 8) % 24;
         const beijingMin = new Date().getUTCMinutes();
         const beijingTime = beijingHour + beijingMin / 60;
         const isOpen = (beijingTime >= 9 && beijingTime < 11.5) || (beijingTime >= 13.5 && beijingTime < 15.5);
         document.getElementById('shanghaiStatus').textContent = isOpen ? '🟢' : '🔴';
+        
+        // India MCX
+        document.getElementById('indiaSpot').textContent = `$${prices.silver.price.toFixed(2)}`;
+        document.getElementById('indiaPrice').textContent = `₹${prices.india.inrPerGram.toFixed(2)}/g`;
+        document.getElementById('indiaPremium').textContent = `+${prices.india.premiumPct.toFixed(0)}%`;
+        document.getElementById('indiaInrGram').textContent = `₹${prices.india.inrPerGram.toFixed(2)}`;
+        document.getElementById('indiaInrKg').textContent = `₹${prices.india.inrPerKg.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+        document.getElementById('indiaForex').textContent = prices.india.forex.toFixed(2);
     }
     
     updateCalculator();
 }
 
 function updateLastUpdated() {
-    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const el = document.getElementById('lastUpdate');
+    if (el) el.textContent = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 }
 
 // TradingView Chart - Simple iframe embed
