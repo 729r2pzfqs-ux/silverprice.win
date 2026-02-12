@@ -46,6 +46,13 @@ const i18n = {
         shanghaiSilver: 'Plata Shanghai (Ag T+D)', indiaMcx: 'Plata MCX India',
         intlSpot: 'Spot Internacional', mcxPrice: 'Precio MCX', includesDuty: 'incluye arancel + GST',
         status: 'Estado', duty: 'Arancel', updated: 'Actualizado cada 60s • Datos solo informativos'
+    },
+    zh: {
+        gold: '黄金', silver: '白银', platinum: '铂金', palladium: '钯金',
+        calculator: '计算器', westernSpot: '西方现货', premium: '溢价',
+        shanghaiSilver: '上海白银 (Ag T+D)', indiaMcx: '印度MCX白银',
+        intlSpot: '国际现货', mcxPrice: 'MCX价格', includesDuty: '含7.5%关税 + 3%GST',
+        status: '状态', duty: '关税', updated: '每60秒更新 • 仅供参考'
     }
 };
 
@@ -61,7 +68,7 @@ let prices = {
 };
 
 let currentCurrency = 'USD';
-let currencyRates = { USD: 1, EUR: 0.84, GBP: 0.73, INR: 90.74, MYR: 3.92, AUD: 1.40 };
+let currencyRates = { USD: 1, EUR: 0.84, GBP: 0.73, CNY: 7.25, INR: 90.74, MYR: 3.92, AUD: 1.40 };
 let selectedMetal = 'gold';
 
 // Get text in current language
