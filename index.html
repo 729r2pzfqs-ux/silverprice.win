@@ -137,9 +137,15 @@
         <div id="regionalSection" class="hidden">
             <!-- Shanghai Silver -->
             <div class="metal-card rounded-2xl border border-red-500/30 p-4 mb-4">
-                <div class="flex items-center gap-2 mb-3">
-                    <span>🇨🇳</span>
-                    <h3 class="font-semibold" data-i18n="shanghaiSilver">Shanghai Silver (Ag T+D)</h3>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span>🇨🇳</span>
+                        <h3 class="font-semibold" data-i18n="shanghaiSilver">Shanghai Silver (Ag T+D)</h3>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span id="shanghaiMarketStatus">🔴</span>
+                        <span id="shanghaiMarketStatusText" class="text-slate-400">Closed</span>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-3 mb-3">
@@ -161,7 +167,7 @@
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-4 gap-2 text-xs">
+                <div class="grid grid-cols-3 gap-2 text-xs">
                     <div class="bg-slate-800/50 rounded-lg p-2 text-center">
                         <div class="text-slate-400">CNY/g</div>
                         <div id="shanghaiCnyGram">--</div>
@@ -173,10 +179,6 @@
                     <div class="bg-slate-800/50 rounded-lg p-2 text-center">
                         <div class="text-slate-400">USD/kg</div>
                         <div id="shanghaiUsdKg">--</div>
-                    </div>
-                    <div class="bg-slate-800/50 rounded-lg p-2 text-center">
-                        <div class="text-slate-400" data-i18n="status">Status</div>
-                        <div id="shanghaiStatus">--</div>
                     </div>
                 </div>
             </div>
