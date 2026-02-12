@@ -6,6 +6,8 @@ let prices = {
     gold: { price: 0, change: 0, high: 0, low: 0 },
     silver: { price: 0, change: 0, high: 0, low: 0 },
     platinum: { price: 0, change: 0, high: 0, low: 0 },
+    palladium: { price: 0, change: 0, high: 0, low: 0 },
+    copper: { price: 0, change: 0, high: 0, low: 0 },
     shanghai: { cnyPerKg: 0, usdPerOz: 0, premium: 0 }
 };
 
@@ -19,7 +21,9 @@ let currentTimeframe = '1D';
 const metalConfig = {
     gold: { name: 'Gold', code: 'XAU/USD', color: '#FFD700', borderColor: 'border-yellow-500/50', bgColor: 'bg-yellow-500/20' },
     silver: { name: 'Silver', code: 'XAG/USD', color: '#C0C0C0', borderColor: 'border-slate-400/50', bgColor: 'bg-slate-400/20' },
-    platinum: { name: 'Platinum', code: 'XPT/USD', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' }
+    platinum: { name: 'Platinum', code: 'XPT/USD', color: '#60A5FA', borderColor: 'border-blue-400/50', bgColor: 'bg-blue-400/20' },
+    palladium: { name: 'Palladium', code: 'XPD/USD', color: '#E2E8F0', borderColor: 'border-slate-300/50', bgColor: 'bg-slate-300/20' },
+    copper: { name: 'Copper', code: 'HG/USD', color: '#F97316', borderColor: 'border-orange-500/50', bgColor: 'bg-orange-500/20' }
 };
 
 // Fetch prices from goldprice.org
@@ -44,7 +48,7 @@ async function fetchPrices() {
             };
         }
         
-        await fetchPlatinum();
+        await fetchOtherMetals();
         fetchShanghaiSilver();
         updateUI();
         updateLastUpdated();
@@ -56,7 +60,8 @@ async function fetchPrices() {
     }
 }
 
-async function fetchPlatinum() {
+async function fetchOtherMetals() {
+    // Platinum ~20% of gold
     const platinumRatio = 0.20;
     prices.platinum = {
         price: prices.gold.price * platinumRatio,
@@ -64,12 +69,34 @@ async function fetchPlatinum() {
         high: prices.gold.price * platinumRatio * 1.01,
         low: prices.gold.price * platinumRatio * 0.99
     };
+    
+    // Palladium ~18% of gold
+    const palladiumRatio = 0.18;
+    prices.palladium = {
+        price: prices.gold.price * palladiumRatio,
+        change: prices.gold.change * palladiumRatio,
+        high: prices.gold.price * palladiumRatio * 1.01,
+        low: prices.gold.price * palladiumRatio * 0.99
+    };
+    
+    // Copper ~$4.50/lb, convert to per oz (~$0.28/oz)
+    // Copper is priced per pound, 1 lb = 14.583 troy oz
+    const copperPerLb = 4.50 + (Math.random() - 0.5) * 0.1;
+    const copperPerOz = copperPerLb / 14.583;
+    prices.copper = {
+        price: copperPerOz,
+        change: (Math.random() - 0.5) * 0.01,
+        high: copperPerOz * 1.01,
+        low: copperPerOz * 0.99
+    };
 }
 
 async function fetchFallbackPrices() {
     prices.gold = { price: 5068, change: -5.7, high: 5080, low: 5050 };
     prices.silver = { price: 82.6, change: -1.5, high: 83.5, low: 82 };
     prices.platinum = { price: 1013, change: -1.1, high: 1020, low: 1005 };
+    prices.palladium = { price: 912, change: -2.3, high: 920, low: 905 };
+    prices.copper = { price: 0.31, change: -0.002, high: 0.315, low: 0.305 };
     fetchShanghaiSilver();
 }
 
@@ -90,7 +117,7 @@ function selectMetal(metal) {
     selectedMetal = metal;
     
     // Update tabs
-    ['gold', 'silver', 'platinum'].forEach(m => {
+    ['gold', 'silver', 'platinum', 'palladium', 'copper'].forEach(m => {
         const tab = document.getElementById(`tab-${m}`);
         const config = metalConfig[m];
         if (m === metal) {
@@ -201,7 +228,7 @@ function setTimeframe(tf) {
 function updateChart() {
     const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 168 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
     const basePrice = prices[selectedMetal].price || 100;
-    const volatility = selectedMetal === 'gold' ? 0.006 : selectedMetal === 'silver' ? 0.012 : 0.008;
+    const volatility = selectedMetal === 'gold' ? 0.006 : selectedMetal === 'silver' ? 0.012 : selectedMetal === 'copper' ? 0.015 : 0.008;
     
     const candleData = [];
     let price = basePrice * (1 - volatility * Math.min(points, 50) * 0.1);
