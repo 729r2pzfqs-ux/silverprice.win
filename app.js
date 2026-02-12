@@ -1,6 +1,7 @@
 // Metal Prices App - Single Metal View
 const TROY_OZ_TO_GRAM = 31.1035;
 const TROY_OZ_TO_KG = 0.0311035;
+const METALPRICE_API_KEY = '0ae37d0957a3c6802e2ec39d9c1a939c';
 
 let prices = {
     gold: { price: 0, change: 0, high: 0, low: 0 },
@@ -266,31 +267,104 @@ function setTimeframe(tf) {
     updateChart();
 }
 
-function updateChart() {
-    const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 168 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
+// Cache for historical data
+let historicalCache = {};
+
+async function updateChart() {
+    const metalSymbols = { gold: 'XAU', silver: 'XAG', platinum: 'XPT', palladium: 'XPD', copper: 'XCU' };
+    const symbol = metalSymbols[selectedMetal];
+    const basePrice = prices[selectedMetal].price || 100;
+    
+    // For copper, use simulated data (no API coverage)
+    if (selectedMetal === 'copper') {
+        updateChartSimulated();
+        return;
+    }
+    
+    // Try to fetch real OHLC data (5 days max on free tier)
+    const cacheKey = `${symbol}_${currentTimeframe}`;
+    const now = Date.now();
+    
+    // Use cache if fresh (15 min)
+    if (historicalCache[cacheKey] && (now - historicalCache[cacheKey].time) < 900000) {
+        candlestickSeries.setData(historicalCache[cacheKey].data);
+        chart.timeScale().fitContent();
+        return;
+    }
+    
+    try {
+        // Calculate date range (max 5 days for free tier)
+        const days = currentTimeframe === '1D' ? 1 : currentTimeframe === '1W' ? 5 : 5;
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+        startDate.setDate(startDate.getDate() - days);
+        
+        const formatDate = d => d.toISOString().split('T')[0];
+        const candleData = [];
+        
+        // Fetch OHLC for each day (builds proper candlesticks)
+        for (let i = 0; i <= days; i++) {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + i);
+            const dateStr = formatDate(date);
+            
+            // Skip future dates
+            if (date > endDate) continue;
+            
+            try {
+                const ohlcUrl = `https://api.metalpriceapi.com/v1/ohlc?api_key=${METALPRICE_API_KEY}&base=${symbol}&currency=USD&date=${dateStr}`;
+                const resp = await fetch(ohlcUrl);
+                const data = await resp.json();
+                
+                if (data.success && data.rate) {
+                    candleData.push({
+                        time: Math.floor(date.getTime() / 1000),
+                        open: +data.rate.open.toFixed(2),
+                        high: +data.rate.high.toFixed(2),
+                        low: +data.rate.low.toFixed(2),
+                        close: +data.rate.close.toFixed(2)
+                    });
+                }
+            } catch (e) {
+                console.log(`Skip ${dateStr}:`, e);
+            }
+        }
+        
+        if (candleData.length > 0) {
+            // Cache the result
+            historicalCache[cacheKey] = { data: candleData, time: now };
+            candlestickSeries.setData(candleData);
+            chart.timeScale().fitContent();
+            console.log(`✅ Real OHLC data: ${candleData.length} candles`);
+            return;
+        }
+    } catch (e) {
+        console.log('OHLC fetch error:', e);
+    }
+    
+    // Fallback to simulated
+    updateChartSimulated();
+}
+
+function updateChartSimulated() {
+    const points = currentTimeframe === '1D' ? 24 : currentTimeframe === '1W' ? 7 : currentTimeframe === '1M' ? 30 : currentTimeframe === '3M' ? 90 : 365;
     const basePrice = prices[selectedMetal].price || 100;
     const change = prices[selectedMetal].change || 0;
     const volatility = selectedMetal === 'gold' ? 0.003 : selectedMetal === 'silver' ? 0.006 : selectedMetal === 'copper' ? 0.008 : 0.004;
     
     const candleData = [];
     const now = Math.floor(Date.now() / 1000);
-    const interval = currentTimeframe === '1D' || currentTimeframe === '1W' ? 3600 : 86400;
+    const interval = currentTimeframe === '1D' ? 3600 : 86400;
     
-    // Start price based on actual change (for 1D, use real change; longer = estimate)
     const totalChange = currentTimeframe === '1D' ? change : change * (points / 24);
     let price = basePrice - totalChange;
     
-    // Generate smoother trend toward current price
     for (let i = 0; i < points; i++) {
         const progress = i / (points - 1);
         const targetPrice = (basePrice - totalChange) + (totalChange * progress);
-        
-        // Add small noise but keep trend direction
         const noise = (Math.random() - 0.5) * volatility * basePrice;
         const open = price;
         const close = targetPrice + noise * 0.3;
-        
-        // Realistic high/low within 0.5% of candle body
         const body = Math.abs(close - open);
         const wick = Math.max(body * 0.3, basePrice * volatility * 0.2);
         const high = Math.max(open, close) + Math.random() * wick;
@@ -303,10 +377,7 @@ function updateChart() {
         price = close;
     }
     
-    // Ensure last candle ends at current price
-    if (candleData.length) {
-        candleData[candleData.length - 1].close = basePrice;
-    }
+    if (candleData.length) candleData[candleData.length - 1].close = basePrice;
     
     candlestickSeries.setData(candleData);
     chart.timeScale().fitContent();
