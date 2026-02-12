@@ -78,9 +78,16 @@ def update_html_for_lang(html, lang):
                     </div>
                 </div>'''
     
-    # Replace the old select
+    # Replace the old select OR existing dropdown
     html = re.sub(
         r'<select id="language"[^>]*>.*?</select>',
+        lang_selector_html,
+        html,
+        flags=re.DOTALL
+    )
+    # Also replace if already converted to dropdown
+    html = re.sub(
+        r'<div class="lang-dropdown relative">.*?</div>\s*</div>',
         lang_selector_html,
         html,
         flags=re.DOTALL
@@ -104,6 +111,14 @@ def update_html_for_lang(html, lang):
     <script src="'''
     html = html.replace('<script src="app.js">', lang_script + 'app.js">')
     html = html.replace('<script src="../app.js">', lang_script + '../app.js">')
+    
+    # Remove any existing dropdown JS first
+    html = re.sub(
+        r'\s*<script>\s*// Language dropdown toggle.*?</script>',
+        '',
+        html,
+        flags=re.DOTALL
+    )
     
     # Add JS for dropdown toggle
     dropdown_js = '''
