@@ -53,6 +53,41 @@ const i18n = {
         shanghaiSilver: '上海白银 (Ag T+D)', indiaMcx: '印度MCX白银',
         intlSpot: '国际现货', mcxPrice: 'MCX价格', includesDuty: '含7.5%关税 + 3%GST',
         status: '状态', duty: '关税', updated: '每60秒更新 • 仅供参考'
+    },
+    fr: {
+        gold: 'Or', silver: 'Argent', platinum: 'Platine', palladium: 'Palladium',
+        calculator: 'Calculatrice', westernSpot: 'Spot Occidental', premium: 'Prime',
+        shanghaiSilver: 'Argent Shanghai (Ag T+D)', indiaMcx: 'Argent MCX Inde',
+        intlSpot: 'Spot International', mcxPrice: 'Prix MCX', includesDuty: 'inclut droits + GST',
+        status: 'Statut', duty: 'Droits', updated: 'Mise à jour toutes les 60s • Données informatives'
+    },
+    pt: {
+        gold: 'Ouro', silver: 'Prata', platinum: 'Platina', palladium: 'Paládio',
+        calculator: 'Calculadora', westernSpot: 'Spot Ocidental', premium: 'Prêmio',
+        shanghaiSilver: 'Prata Shanghai (Ag T+D)', indiaMcx: 'Prata MCX Índia',
+        intlSpot: 'Spot Internacional', mcxPrice: 'Preço MCX', includesDuty: 'inclui impostos + GST',
+        status: 'Status', duty: 'Impostos', updated: 'Atualizado a cada 60s • Dados informativos'
+    },
+    tr: {
+        gold: 'Altın', silver: 'Gümüş', platinum: 'Platin', palladium: 'Paladyum',
+        calculator: 'Hesap Makinesi', westernSpot: 'Batı Spot', premium: 'Prim',
+        shanghaiSilver: 'Şanghay Gümüş (Ag T+D)', indiaMcx: 'Hindistan MCX Gümüş',
+        intlSpot: 'Uluslararası Spot', mcxPrice: 'MCX Fiyatı', includesDuty: 'vergi dahil + GST',
+        status: 'Durum', duty: 'Vergi', updated: 'Her 60 saniyede güncellenir • Bilgi amaçlı'
+    },
+    ja: {
+        gold: '金', silver: '銀', platinum: 'プラチナ', palladium: 'パラジウム',
+        calculator: '計算機', westernSpot: '欧米スポット', premium: 'プレミアム',
+        shanghaiSilver: '上海シルバー (Ag T+D)', indiaMcx: 'インドMCXシルバー',
+        intlSpot: '国際スポット', mcxPrice: 'MCX価格', includesDuty: '関税+GST込み',
+        status: 'ステータス', duty: '関税', updated: '60秒ごとに更新 • 情報提供のみ'
+    },
+    ru: {
+        gold: 'Золото', silver: 'Серебро', platinum: 'Платина', palladium: 'Палладий',
+        calculator: 'Калькулятор', westernSpot: 'Западный спот', premium: 'Премия',
+        shanghaiSilver: 'Шанхайское серебро (Ag T+D)', indiaMcx: 'Индия MCX Серебро',
+        intlSpot: 'Международный спот', mcxPrice: 'Цена MCX', includesDuty: 'включая пошлину + GST',
+        status: 'Статус', duty: 'Пошлина', updated: 'Обновляется каждые 60с • Только для информации'
     }
 };
 
