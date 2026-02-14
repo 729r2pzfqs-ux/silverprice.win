@@ -3,6 +3,7 @@
 
 import re
 from pathlib import Path
+import time
 
 LANGUAGES = {
     'en': {'name': 'English', 'flag': '🇬🇧', 'title': 'Live Silver, Gold & Metal Prices', 'desc': 'Live precious metal prices - Silver, Gold, Platinum, Palladium. Real-time spot prices, charts, and Shanghai silver premium.'},
@@ -28,17 +29,31 @@ def generate_hreflang_tags():
             tags.append(f'    <link rel="alternate" hreflang="{lang}" href="https://silverprice.win/{lang}/" />')
     return '\n'.join(tags)
 
-def generate_lang_selector():
-    """Generate language selector that links between pages"""
-    options = []
-    for lang, info in LANGUAGES.items():
-        href = '/' if lang == 'en' else f'/{lang}/'
-        options.append(f'<a href="{href}" class="lang-option" data-lang="{lang}">{info["flag"]} {lang.upper()}</a>')
-    return '\n                    '.join(options)
+def generate_lang_dropdown(current_lang):
+    """Generate language dropdown HTML"""
+    info = LANGUAGES[current_lang]
+    html = f'''<div class="lang-dropdown relative">
+                    <button id="langBtn" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs flex items-center gap-1">
+                        {info["flag"]} {current_lang.upper()} <span class="text-xs">▼</span>
+                    </button>
+                    <div id="langMenu" class="hidden absolute right-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg py-1 z-50 min-w-[80px]">'''
+    
+    for l, i in LANGUAGES.items():
+        href = '/' if l == 'en' else f'/{l}/'
+        active = 'bg-slate-700' if l == current_lang else 'hover:bg-slate-700'
+        html += f'''
+                        <a href="{href}" class="block px-3 py-1 text-xs {active}">{i["flag"]} {l.upper()}</a>'''
+    
+    html += '''
+                    </div>
+                </div>'''
+    return html
 
-def update_html_for_lang(html, lang):
-    """Update HTML content for specific language"""
+def update_html_for_lang(template, lang):
+    """Update HTML content for specific language - starts from clean template each time"""
     info = LANGUAGES[lang]
+    html = template
+    cache_bust = int(time.time())
     
     # Update html lang attribute
     html = re.sub(r'<html lang="[^"]*">', f'<html lang="{lang}">', html)
@@ -57,7 +72,10 @@ def update_html_for_lang(html, lang):
         html
     )
     
-    # Add hreflang tags after viewport meta
+    # Remove any existing hreflang tags first
+    html = re.sub(r'\s*<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', '', html)
+    
+    # Add fresh hreflang tags after viewport meta
     hreflang = generate_hreflang_tags()
     html = re.sub(
         r'(<meta name="viewport"[^>]*>)',
@@ -65,35 +83,17 @@ def update_html_for_lang(html, lang):
         html
     )
     
-    # Update language selector to use links instead of JS-only dropdown
-    # Replace the select dropdown with link-based selector
-    lang_selector_html = f'''<div class="lang-dropdown relative">
-                    <button id="langBtn" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs flex items-center gap-1">
-                        {info["flag"]} {lang.upper()} <span class="text-xs">▼</span>
-                    </button>
-                    <div id="langMenu" class="hidden absolute right-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg py-1 z-50 min-w-[80px]">'''
-    
-    for l, i in LANGUAGES.items():
-        href = '/' if l == 'en' else f'/{l}/'
-        active = 'bg-slate-700' if l == lang else 'hover:bg-slate-700'
-        lang_selector_html += f'''
-                        <a href="{href}" class="block px-3 py-1 text-xs {active}">{i["flag"]} {l.upper()}</a>'''
-    
-    lang_selector_html += '''
-                    </div>
-                </div>'''
-    
-    # Replace the old select OR existing dropdown
+    # Replace language dropdown/select
+    lang_dropdown = generate_lang_dropdown(lang)
     html = re.sub(
         r'<select id="language"[^>]*>.*?</select>',
-        lang_selector_html,
+        lang_dropdown,
         html,
         flags=re.DOTALL
     )
-    # Also replace if already converted to dropdown
     html = re.sub(
-        r'<div class="lang-dropdown relative">.*?</div>\s*</div>',
-        lang_selector_html,
+        r'<div class="lang-dropdown relative">.*?</div>\s*</div>\s*</div>',
+        lang_dropdown,
         html,
         flags=re.DOTALL
     )
@@ -105,21 +105,35 @@ def update_html_for_lang(html, lang):
         html
     )
     
-    # Fix paths for subdirectory (CSS, JS, etc)
+    # Fix app.js path for subdirectories
     if lang != 'en':
-        html = html.replace('src="app.js"', 'src="../app.js"')
-        html = html.replace('href="/blog.html"', 'href="/blog.html"')
+        # Replace app.js with ../app.js for subdirectories
+        html = re.sub(
+            r'<script src="app\.js[^"]*">',
+            f'<script src="../app.js?v={cache_bust}">',
+            html
+        )
+    else:
+        # Add cache bust for main page
+        html = re.sub(
+            r'<script src="app\.js[^"]*">',
+            f'<script src="app.js?v={cache_bust}">',
+            html
+        )
+    
+    # Add pageLang script before app.js (remove any existing first)
+    html = re.sub(r"<script>window\.pageLang = '[^']*';</script>\s*", '', html)
+    html = re.sub(
+        r'(<script src="[^"]*app\.js[^"]*">)',
+        f"<script>window.pageLang = '{lang}';</script>\n    \\1",
+        html
+    )
+    
+    # Fix blog link for subdirectories
+    if lang != 'en':
         html = html.replace('href="blog.html"', 'href="../blog.html"')
     
-    # Add script to set language BEFORE app.js loads (with cache-bust)
-    import time
-    cache_bust = int(time.time())
-    lang_script = f'''<script>window.pageLang = '{lang}';</script>
-    <script src="'''
-    html = html.replace('<script src="app.js">', lang_script + f'app.js?v={cache_bust}">')
-    html = html.replace('<script src="../app.js">', lang_script + f'../app.js?v={cache_bust}">')
-    
-    # Remove any existing dropdown JS first
+    # Remove any existing dropdown JS first, then add fresh
     html = re.sub(
         r'\s*<script>\s*// Language dropdown toggle.*?</script>',
         '',
@@ -127,7 +141,7 @@ def update_html_for_lang(html, lang):
         flags=re.DOTALL
     )
     
-    # Add JS for dropdown toggle
+    # Add JS for dropdown toggle before </body>
     dropdown_js = '''
     <script>
         // Language dropdown toggle
@@ -140,32 +154,31 @@ def update_html_for_lang(html, lang):
         });
     </script>
 </body>'''
-    html = html.replace('</body>', dropdown_js)
+    html = re.sub(r'\s*</body>', dropdown_js, html)
     
     return html
 
 def main():
     base_dir = Path(__file__).parent
+    
+    # Read the ORIGINAL template (without any language modifications)
+    # We'll use index.html but strip out any previous lang modifications
     template = (base_dir / 'index.html').read_text()
     
-    # First update the main index.html with hreflang tags
-    en_html = update_html_for_lang(template, 'en')
-    (base_dir / 'index.html').write_text(en_html)
-    print(f"✅ Updated /index.html (en)")
-    
-    # Generate language versions
+    # Generate all language versions including English
     for lang in LANGUAGES:
-        if lang == 'en':
-            continue
-        
-        lang_dir = base_dir / lang
-        lang_dir.mkdir(exist_ok=True)
-        
         lang_html = update_html_for_lang(template, lang)
-        (lang_dir / 'index.html').write_text(lang_html)
-        print(f"✅ Created /{lang}/index.html")
+        
+        if lang == 'en':
+            (base_dir / 'index.html').write_text(lang_html)
+            print(f"✅ Updated /index.html (en)")
+        else:
+            lang_dir = base_dir / lang
+            lang_dir.mkdir(exist_ok=True)
+            (lang_dir / 'index.html').write_text(lang_html)
+            print(f"✅ Created /{lang}/index.html")
     
-    print(f"\n🌍 Generated {len(LANGUAGES)} language versions with hreflang tags!")
+    print(f"\n🌍 Generated {len(LANGUAGES)} language versions!")
 
 if __name__ == '__main__':
     main()

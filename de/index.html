@@ -24,27 +24,6 @@
     <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
     <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
     <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
-    <link rel="alternate" hreflang="x-default" href="https://silverprice.win/" />
-    <link rel="alternate" hreflang="en" href="https://silverprice.win/" />
-    <link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/" />
-    <link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/" />
-    <link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/" />
-    <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
-    <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
-    <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
-    <link rel="alternate" hreflang="fr" href="https://silverprice.win/fr/" />
-    <link rel="alternate" hreflang="pt" href="https://silverprice.win/pt/" />
-    <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
-    <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
-    <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
-    <link rel="alternate" hreflang="x-default" href="https://silverprice.win/" />
-    <link rel="alternate" hreflang="en" href="https://silverprice.win/" />
-    <link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/" />
-    <link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/" />
-    <link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/" />
-    <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
-    <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
-    <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
     <title>SilverPrice.win - Live Silber-, Gold- & Metallpreise</title>
     <meta name="description" content="Live Edelmetallpreise - Silber, Gold, Platin, Palladium. Echtzeit-Spotpreise, Charts und Shanghai-Silberprämie.">
     
@@ -157,63 +136,6 @@
                         <a href="/ru/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇷🇺 RU</a>
                     </div>
                 </div>
-                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-1.5 py-1 text-xs">
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="CNY">CNY</option>
-                    <option value="INR">INR</option>
-                    <option value="MYR">MYR</option>
-                    <option value="AUD">AUD</option>
-                    <option value="GBP">GBP</option>
-                </select>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-2xl mx-auto px-4 py-4">
-        <!-- Metal Selector Tabs -->
-        <div class="grid grid-cols-4 gap-2 mb-4">
-            <button onclick="selectMetal('gold')" id="tab-gold" class="metal-tab py-2 px-2 rounded-xl bg-yellow-500/20 border-2 border-yellow-500/50 active">
-                <div class="text-center flex flex-col items-center">
-                    <svg width="24" height="16" viewBox="0 0 24 16"><rect x="1" y="3" width="22" height="10" rx="1" fill="#FFD700"/><rect x="3" y="5" width="18" height="6" rx="1" fill="#FFC107"/><rect x="5" y="7" width="14" height="2" fill="#FFEB3B"/></svg>
-                    <div class="text-xs font-medium mt-1">Gold</div>
-                </div>
-            </button>
-            <button onclick="selectMetal('silver')" id="tab-silver" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
-                <div class="text-center flex flex-col items-center">
-                    <svg width="24" height="16" viewBox="0 0 24 16"><rect x="1" y="3" width="22" height="10" rx="1" fill="#A0A0A0"/><rect x="3" y="5" width="18" height="6" rx="1" fill="#C0C0C0"/><rect x="5" y="7" width="14" height="2" fill="#E8E8E8"/></svg>
-                    <div class="text-xs font-medium mt-1">Silver</div>
-                </div>
-            </button>
-            <button onclick="selectMetal('platinum')" id="tab-platinum" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
-                <div class="text-center flex flex-col items-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#B8C5D0" stroke="#9AAAB8" stroke-width="1"/><circle cx="10" cy="10" r="6" fill="#D4E1EB"/><circle cx="10" cy="10" r="3" fill="#EDF4F8"/></svg>
-                    <div class="text-xs font-medium mt-1">Platinum</div>
-                </div>
-            </button>
-            <button onclick="selectMetal('palladium')" id="tab-palladium" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
-                <div class="text-center flex flex-col items-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#8E9BA5" stroke="#7A8890" stroke-width="1"/><circle cx="10" cy="10" r="6" fill="#B0BBC4"/><circle cx="10" cy="10" r="3" fill="#D0D8DE"/></svg>
-                    <div class="text-xs font-medium mt-1">Palladium</div>
-                </div>
-            </button>
-        </div>
-
-        <!-- Price Card -->
-        <div class="metal-card rounded-2xl border border-slate-700/50 p-4 mb-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 id="metalName" class="text-lg font-bold">Gold</h2>
-                    <p id="metalCode" class="text-xs text-slate-400">XAU/USD</p>
-                </div>
-                <div class="text-right">
-                    <div id="metalPrice" class="text-2xl font-bold">--</div>
-                    <div class="flex items-center justify-end gap-2">
-                        <span id="metalChange" class="text-sm">--</span>
-                        <span id="metalChangePct" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- TradingView Chart -->
@@ -351,9 +273,8 @@
         </div>
     </footer>
 
-    <script>window.pageLang = 'en';</script>
-    <script src="app.js?v=1770934660"></script>
-
+    <script>window.pageLang = 'de';</script>
+    <script src="../app.js?v=1771060128"></script>
     <script>
         // Language dropdown toggle
         document.getElementById('langBtn')?.addEventListener('click', function(e) {
