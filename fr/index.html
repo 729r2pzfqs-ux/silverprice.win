@@ -137,6 +137,16 @@
                     </div>
                 </div>
         </div>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-4 py-4">
+        <!-- Metal Tabs -->
+        <div class="flex justify-center mb-4 gap-2">
+            <button onclick="selectMetal('gold')" id="goldTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" data-i18n="gold">Gold</button>
+            <button onclick="selectMetal('silver')" id="silverTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="silver">Silver</button>
+            <button onclick="selectMetal('platinum')" id="platinumTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="platinum">Platinum</button>
+            <button onclick="selectMetal('palladium')" id="palladiumTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="palladium">Palladium</button>
+        </div>
 
         <!-- TradingView Chart -->
         <div class="metal-card rounded-2xl border border-slate-700/50 overflow-hidden mb-4">
@@ -274,7 +284,7 @@
     </footer>
 
     <script>window.pageLang = 'fr';</script>
-    <script src="../app.js?v=1771060128"></script>
+    <script src="../app.js?v=1771060713"></script>
     <script>
         // Language dropdown toggle
         document.getElementById('langBtn')?.addEventListener('click', function(e) {
