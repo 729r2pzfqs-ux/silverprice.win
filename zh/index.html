@@ -19,8 +19,76 @@
     <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
     <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
     <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
+    <link rel="alternate" hreflang="fr" href="https://silverprice.win/fr/" />
+    <link rel="alternate" hreflang="pt" href="https://silverprice.win/pt/" />
+    <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
+    <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
+    <link rel="alternate" hreflang="x-default" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="en" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/" />
+    <link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/" />
+    <link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/" />
+    <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
+    <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
+    <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
+    <link rel="alternate" hreflang="fr" href="https://silverprice.win/fr/" />
+    <link rel="alternate" hreflang="pt" href="https://silverprice.win/pt/" />
+    <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
+    <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
+    <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
+    <link rel="alternate" hreflang="x-default" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="en" href="https://silverprice.win/" />
+    <link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/" />
+    <link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/" />
+    <link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/" />
+    <link rel="alternate" hreflang="de" href="https://silverprice.win/de/" />
+    <link rel="alternate" hreflang="es" href="https://silverprice.win/es/" />
+    <link rel="alternate" hreflang="it" href="https://silverprice.win/it/" />
     <title>SilverPrice.win - 实时银价、金价和金属价格</title>
     <meta name="description" content="实时贵金属价格 - 白银、黄金、铂金、钯金。实时现货价格、图表和上海白银溢价。">
+    
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SilverPrice.win",
+        "url": "https://silverprice.win/",
+        "description": "Live precious metal prices including Silver, Gold, Platinum and Palladium with real-time spot prices and charts",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://silverprice.win/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FinancialProduct",
+        "name": "Live Silver Price",
+        "description": "Real-time silver spot price with historical charts",
+        "category": "Precious Metals",
+        "provider": {
+            "@type": "Organization",
+            "name": "SilverPrice.win"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://silverprice.win/"
+        }]
+    }
+    </script>
+    
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='16' rx='2' fill='%23C0C0C0'/%3E%3Crect x='6' y='10' width='20' height='12' rx='1' fill='%23E8E8E8'/%3E%3Crect x='8' y='13' width='16' height='6' fill='%23F5F5F5'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
@@ -82,6 +150,11 @@
                         <a href="/de/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇩🇪 DE</a>
                         <a href="/es/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇪🇸 ES</a>
                         <a href="/it/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇮🇹 IT</a>
+                        <a href="/fr/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇫🇷 FR</a>
+                        <a href="/pt/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇧🇷 PT</a>
+                        <a href="/tr/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇹🇷 TR</a>
+                        <a href="/ja/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇯🇵 JA</a>
+                        <a href="/ru/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇷🇺 RU</a>
                     </div>
                 </div>
                 <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-1.5 py-1 text-xs">
@@ -278,8 +351,8 @@
         </div>
     </footer>
 
-    <script>window.pageLang = 'zh';</script>
-    <script src="../app.js?v=1770934660"></script>
+    <script>window.pageLang = 'en';</script>
+    <script src="app.js?v=1770934660"></script>
 
     <script>
         // Language dropdown toggle
