@@ -12,6 +12,11 @@ LANGUAGES = {
     'de': {'name': 'Deutsch', 'flag': '🇩🇪', 'title': 'Live Silber-, Gold- & Metallpreise', 'desc': 'Live Edelmetallpreise - Silber, Gold, Platin, Palladium. Echtzeit-Spotpreise, Charts und Shanghai-Silberprämie.'},
     'es': {'name': 'Español', 'flag': '🇪🇸', 'title': 'Precios de Plata, Oro y Metales en Vivo', 'desc': 'Precios de metales preciosos en vivo - Plata, Oro, Platino, Paladio. Precios spot en tiempo real, gráficos y prima de plata de Shanghái.'},
     'it': {'name': 'Italiano', 'flag': '🇮🇹', 'title': 'Prezzi Argento, Oro e Metalli in Tempo Reale', 'desc': 'Prezzi metalli preziosi in tempo reale - Argento, Oro, Platino, Palladio. Prezzi spot, grafici e premio argento Shanghai.'},
+    'fr': {'name': 'Français', 'flag': '🇫🇷', 'title': 'Prix de l\'Argent, de l\'Or et des Métaux en Direct', 'desc': 'Prix des métaux précieux en direct - Argent, Or, Platine, Palladium. Prix spot en temps réel, graphiques et prime argent Shanghai.'},
+    'pt': {'name': 'Português', 'flag': '🇧🇷', 'title': 'Preços de Prata, Ouro e Metais ao Vivo', 'desc': 'Preços de metais preciosos ao vivo - Prata, Ouro, Platina, Paládio. Preços spot em tempo real, gráficos e prêmio de prata de Xangai.'},
+    'tr': {'name': 'Türkçe', 'flag': '🇹🇷', 'title': 'Canlı Gümüş, Altın ve Metal Fiyatları', 'desc': 'Canlı değerli metal fiyatları - Gümüş, Altın, Platin, Paladyum. Gerçek zamanlı spot fiyatlar, grafikler ve Şanghay gümüş primi.'},
+    'ja': {'name': '日本語', 'flag': '🇯🇵', 'title': 'ライブ銀・金・金属価格', 'desc': 'ライブ貴金属価格 - 銀、金、プラチナ、パラジウム。リアルタイムスポット価格、チャート、上海シルバープレミアム。'},
+    'ru': {'name': 'Русский', 'flag': '🇷🇺', 'title': 'Цены на серебро, золото и металлы в реальном времени', 'desc': 'Цены на драгоценные металлы в реальном времени - серебро, золото, платина, палладий. Спотовые цены, графики и шанхайская премия на серебро.'},
 }
 
 def generate_hreflang_tags():
