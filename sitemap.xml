@@ -98,4 +98,18 @@
     <url><loc>https://silverprice.win/blog/ms/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ms/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     
+
+
+    <!-- Blog Index Pages -->
+    <url><loc>https://silverprice.win/blog/zh/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/hi/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/de/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/es/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/fr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/it/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/ja/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/ru/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/pt/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/tr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+    <url><loc>https://silverprice.win/blog/ms/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>
