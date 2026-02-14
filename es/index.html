@@ -24,50 +24,8 @@
     <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
     <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
     <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
-    <title>SilverPrice.win - Precios de Plata, Oro y Metales en Vivo</title>
-    <meta name="description" content="Precios de metales preciosos en vivo - Plata, Oro, Platino, Paladio. Precios spot en tiempo real, gráficos y prima de plata de Shanghái.">
-    
-    <!-- Structured Data / JSON-LD -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "SilverPrice.win",
-        "url": "https://silverprice.win/",
-        "description": "Live precious metal prices including Silver, Gold, Platinum and Palladium with real-time spot prices and charts",
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://silverprice.win/?q={search_term_string}",
-            "query-input": "required name=search_term_string"
-        }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FinancialProduct",
-        "name": "Live Silver Price",
-        "description": "Real-time silver spot price with historical charts",
-        "category": "Precious Metals",
-        "provider": {
-            "@type": "Organization",
-            "name": "SilverPrice.win"
-        }
-    }
-    </script>
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://silverprice.win/"
-        }]
-    }
-    </script>
-    
+    <title>SilverPrice.win - Live Silver, Gold & Metal Prices</title>
+    <meta name="description" content="Live precious metal prices - Silver, Gold, Platinum, Palladium. Real-time spot prices, charts, and Shanghai silver premium.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='16' rx='2' fill='%23C0C0C0'/%3E%3Crect x='6' y='10' width='20' height='12' rx='1' fill='%23E8E8E8'/%3E%3Crect x='8' y='13' width='16' height='6' fill='%23F5F5F5'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
@@ -119,15 +77,15 @@
                 <button onclick="toggleTheme()" id="themeToggle" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm">🌙</button>
                 <div class="lang-dropdown relative">
                     <button id="langBtn" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs flex items-center gap-1">
-                        🇪🇸 ES <span class="text-xs">▼</span>
+                        🇬🇧 EN <span class="text-xs">▼</span>
                     </button>
                     <div id="langMenu" class="hidden absolute right-0 mt-1 bg-slate-800 border border-slate-700 rounded-lg py-1 z-50 min-w-[80px]">
-                        <a href="/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇬🇧 EN</a>
+                        <a href="/" class="block px-3 py-1 text-xs bg-slate-700">🇬🇧 EN</a>
                         <a href="/zh/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇨🇳 ZH</a>
                         <a href="/hi/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇮🇳 HI</a>
                         <a href="/ms/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇲🇾 MS</a>
                         <a href="/de/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇩🇪 DE</a>
-                        <a href="/es/" class="block px-3 py-1 text-xs bg-slate-700">🇪🇸 ES</a>
+                        <a href="/es/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇪🇸 ES</a>
                         <a href="/it/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇮🇹 IT</a>
                         <a href="/fr/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇫🇷 FR</a>
                         <a href="/pt/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇧🇷 PT</a>
@@ -136,16 +94,63 @@
                         <a href="/ru/" class="block px-3 py-1 text-xs hover:bg-slate-700">🇷🇺 RU</a>
                     </div>
                 </div>
+                <select id="currency" class="bg-slate-800 border border-slate-700 rounded-lg px-1.5 py-1 text-xs">
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="CNY">CNY</option>
+                    <option value="INR">INR</option>
+                    <option value="MYR">MYR</option>
+                    <option value="AUD">AUD</option>
+                    <option value="GBP">GBP</option>
+                </select>
+            </div>
         </div>
     </header>
 
     <main class="max-w-2xl mx-auto px-4 py-4">
-        <!-- Metal Tabs -->
-        <div class="flex justify-center mb-4 gap-2">
-            <button onclick="selectMetal('gold')" id="goldTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" data-i18n="gold">Gold</button>
-            <button onclick="selectMetal('silver')" id="silverTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="silver">Silver</button>
-            <button onclick="selectMetal('platinum')" id="platinumTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="platinum">Platinum</button>
-            <button onclick="selectMetal('palladium')" id="palladiumTab" class="metal-tab px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 border border-slate-700" data-i18n="palladium">Palladium</button>
+        <!-- Metal Selector Tabs -->
+        <div class="grid grid-cols-4 gap-2 mb-4">
+            <button onclick="selectMetal('gold')" id="tab-gold" class="metal-tab py-2 px-2 rounded-xl bg-yellow-500/20 border-2 border-yellow-500/50 active">
+                <div class="text-center flex flex-col items-center">
+                    <svg width="24" height="16" viewBox="0 0 24 16"><rect x="1" y="3" width="22" height="10" rx="1" fill="#FFD700"/><rect x="3" y="5" width="18" height="6" rx="1" fill="#FFC107"/><rect x="5" y="7" width="14" height="2" fill="#FFEB3B"/></svg>
+                    <div class="text-xs font-medium mt-1">Gold</div>
+                </div>
+            </button>
+            <button onclick="selectMetal('silver')" id="tab-silver" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center flex flex-col items-center">
+                    <svg width="24" height="16" viewBox="0 0 24 16"><rect x="1" y="3" width="22" height="10" rx="1" fill="#A0A0A0"/><rect x="3" y="5" width="18" height="6" rx="1" fill="#C0C0C0"/><rect x="5" y="7" width="14" height="2" fill="#E8E8E8"/></svg>
+                    <div class="text-xs font-medium mt-1">Silver</div>
+                </div>
+            </button>
+            <button onclick="selectMetal('platinum')" id="tab-platinum" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center flex flex-col items-center">
+                    <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#B8C5D0" stroke="#9AAAB8" stroke-width="1"/><circle cx="10" cy="10" r="6" fill="#D4E1EB"/><circle cx="10" cy="10" r="3" fill="#EDF4F8"/></svg>
+                    <div class="text-xs font-medium mt-1">Platinum</div>
+                </div>
+            </button>
+            <button onclick="selectMetal('palladium')" id="tab-palladium" class="metal-tab py-2 px-2 rounded-xl bg-slate-700/50 border-2 border-transparent">
+                <div class="text-center flex flex-col items-center">
+                    <svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" fill="#8E9BA5" stroke="#7A8890" stroke-width="1"/><circle cx="10" cy="10" r="6" fill="#B0BBC4"/><circle cx="10" cy="10" r="3" fill="#D0D8DE"/></svg>
+                    <div class="text-xs font-medium mt-1">Palladium</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Price Card -->
+        <div class="metal-card rounded-2xl border border-slate-700/50 p-4 mb-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 id="metalName" class="text-lg font-bold">Gold</h2>
+                    <p id="metalCode" class="text-xs text-slate-400">XAU/USD</p>
+                </div>
+                <div class="text-right">
+                    <div id="metalPrice" class="text-2xl font-bold">--</div>
+                    <div class="flex items-center justify-end gap-2">
+                        <span id="metalChange" class="text-sm">--</span>
+                        <span id="metalChangePct" class="text-xs px-2 py-0.5 rounded-full bg-slate-700">--</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- TradingView Chart -->
@@ -284,7 +289,8 @@
     </footer>
 
     <script>window.pageLang = 'es';</script>
-    <script src="../app.js?v=1771060713"></script>
+    <script src="../app.js?v=1770934660"></script>
+
     <script>
         // Language dropdown toggle
         document.getElementById('langBtn')?.addEventListener('click', function(e) {
