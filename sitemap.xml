@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-    
-    <!-- Main page with all language alternates -->
-    <url>
-        <loc>https://silverprice.win/</loc>
-        <xhtml:link rel="alternate" hreflang="en" href="https://silverprice.win/"/>
-        <xhtml:link rel="alternate" hreflang="zh" href="https://silverprice.win/zh/"/>
-        <xhtml:link rel="alternate" hreflang="hi" href="https://silverprice.win/hi/"/>
-        <xhtml:link rel="alternate" hreflang="ms" href="https://silverprice.win/ms/"/>
-        <xhtml:link rel="alternate" hreflang="de" href="https://silverprice.win/de/"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://silverprice.win/es/"/>
-        <xhtml:link rel="alternate" hreflang="it" href="https://silverprice.win/it/"/>
-        <xhtml:link rel="alternate" hreflang="fr" href="https://silverprice.win/fr/"/>
-        <xhtml:link rel="alternate" hreflang="pt" href="https://silverprice.win/pt/"/>
-        <xhtml:link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/"/>
-        <xhtml:link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/"/>
-        <xhtml:link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://silverprice.win/"/>
-        <changefreq>hourly</changefreq>
-        <priority>1.0</priority>
-    </url>
-    
-    <!-- Language versions -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url><loc>https://silverprice.win/</loc><changefreq>hourly</changefreq><priority>1.0</priority></url>
     <url><loc>https://silverprice.win/zh/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
     <url><loc>https://silverprice.win/hi/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
     <url><loc>https://silverprice.win/ms/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
@@ -34,82 +12,52 @@
     <url><loc>https://silverprice.win/tr/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
     <url><loc>https://silverprice.win/ja/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
     <url><loc>https://silverprice.win/ru/</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
-    
-    <!-- Blog index -->
     <url><loc>https://silverprice.win/blog.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    
-    <!-- Blog posts - English -->
     <url><loc>https://silverprice.win/blog/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Chinese (zh) -->
+    <url><loc>https://silverprice.win/blog/zh/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/zh/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/zh/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/zh/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Hindi (hi) -->
+    <url><loc>https://silverprice.win/blog/hi/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/hi/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/hi/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/hi/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - German (de) -->
+    <url><loc>https://silverprice.win/blog/de/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/de/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/de/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/de/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Spanish (es) -->
+    <url><loc>https://silverprice.win/blog/es/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/es/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/es/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/es/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - French (fr) -->
+    <url><loc>https://silverprice.win/blog/fr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/fr/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/fr/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/fr/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Italian (it) -->
+    <url><loc>https://silverprice.win/blog/it/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/it/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/it/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/it/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Japanese (ja) -->
+    <url><loc>https://silverprice.win/blog/ja/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/ja/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ja/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ja/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Russian (ru) -->
+    <url><loc>https://silverprice.win/blog/ru/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/ru/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ru/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ru/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Portuguese (pt) -->
+    <url><loc>https://silverprice.win/blog/pt/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/pt/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/pt/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/pt/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Turkish (tr) -->
+    <url><loc>https://silverprice.win/blog/tr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/tr/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/tr/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/tr/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-    <!-- Blog posts - Malay (ms) -->
+    <url><loc>https://silverprice.win/blog/ms/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
     <url><loc>https://silverprice.win/blog/ms/gold-vs-silver.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ms/shanghai-silver-premium.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
     <url><loc>https://silverprice.win/blog/ms/silver-price-today.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    
-
-
-    <!-- Blog Index Pages -->
-    <url><loc>https://silverprice.win/blog/zh/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/hi/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/de/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/es/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/fr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/it/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/ja/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/ru/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/pt/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/tr/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-    <url><loc>https://silverprice.win/blog/ms/</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
 </urlset>
