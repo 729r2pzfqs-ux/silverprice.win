@@ -104,7 +104,7 @@ let prices = {
 
 let currentCurrency = 'USD';
 let currencyRates = { USD: 1, EUR: 0.84, GBP: 0.73, CNY: 7.25, INR: 90.74, MYR: 3.92, AUD: 1.40 };
-let selectedMetal = 'gold';
+let selectedMetal = 'silver';
 
 // Get text in current language
 function t(key) {
