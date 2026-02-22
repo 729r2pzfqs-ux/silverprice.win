@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://silverprice.win/sitemap.xml
+Sitemap: https://silverprice.win/sitemap-index.xml
