@@ -326,6 +326,7 @@ function loadTradingViewChart() {
     const theme = isDark ? 'dark' : 'light';
     
     container.innerHTML = `<iframe 
+        title="${config.name} price chart from TradingView"
         src="https://www.tradingview.com/widgetembed/?symbol=${config.tvSymbol}&interval=60&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=000000&studies=[]&theme=${theme}&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en"
         style="width:100%;height:100%;border:none;"
         allowtransparency="true"
