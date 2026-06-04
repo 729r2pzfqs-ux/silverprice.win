@@ -1,0 +1,7 @@
+# silverprice.win
+
+## About
+SilverPrice.win provides live silver, gold, platinum, and palladium prices in 12 languages. Real-time spot prices, historical charts, and price alerts.
+
+## URLs
+- Homepage: https://silverprice.win/
