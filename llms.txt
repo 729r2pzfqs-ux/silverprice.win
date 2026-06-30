@@ -1,7 +1,61 @@
-# silverprice.win
+# SilverPrice.win
 
-## About
-SilverPrice.win provides live silver, gold, platinum, and palladium prices in 12 languages. Real-time spot prices, historical charts, and price alerts.
+> Live silver, gold, platinum, and palladium prices with real-time spot data, charts, and a precious-metals calculator.
 
-## URLs
-- Homepage: https://silverprice.win/
+SilverPrice.win is a fast, lightweight precious-metals price tracker. It shows live spot prices for silver, gold, platinum, and palladium, updated every 60 seconds, alongside interactive price charts, the gold/silver ratio, regional benchmarks (Shanghai and India MCX), and a built-in calculator. The site is available in 12 languages and supports multiple currencies and weight units.
+
+## Features / Content
+- Live spot prices for four metals: Silver (XAG/USD), Gold (XAU/USD), Platinum (XPT/USD), and Palladium (XPD/USD)
+- Real-time updates every 60 seconds, with day high/low, absolute change, and percent change
+- Interactive price charts powered by embedded TradingView widgets (hourly interval, dark/light themes)
+- Gold/Silver ratio indicator (how many ounces of silver one ounce of gold buys), with historical context
+- Regional benchmarks: Shanghai Silver (Ag T+D) premium and India MCX silver pricing (including duty/GST adjustments)
+- Built-in calculator converting a quantity of metal to value across units (troy oz, gram, kg)
+- Multi-currency display: USD, EUR, GBP, CNY, INR, MYR, AUD (live forex conversion)
+- Dark and light theme toggle, with preferences saved in the browser
+- Blog with educational articles on precious-metals investing
+- 12-language interface with localized subpages
+
+## Sections
+- [Home / Live Prices](https://silverprice.win/): Main dashboard with metal selector tabs, live price card, chart, gold/silver ratio, and calculator
+- [Blog](https://silverprice.win/blog.html): Index of educational articles on silver, gold, and metal markets
+- [Silver Price Today](https://silverprice.win/blog/silver-price-today.html): Live silver spot price overview, charts, and factors affecting silver prices
+- [Gold vs Silver](https://silverprice.win/blog/gold-vs-silver.html): Comparison of gold and silver as investments, the gold/silver ratio, and which offers better value in 2026
+- [Shanghai Silver Premium Explained](https://silverprice.win/blog/shanghai-silver-premium.html): Why Chinese silver trades at a premium and what it signals about global demand
+- [Silver Industrial Demand 2026](https://silverprice.win/blog/silver-industrial-demand.html): How solar panels, EVs, and electronics drive record silver demand
+
+## URL Patterns
+- `/` — English home page (live price dashboard)
+- `/blog.html` — blog index
+- `/blog/<slug>.html` — individual blog articles (e.g. `/blog/silver-price-today.html`)
+- `/<lang>/` — localized home page per language, e.g. `/de/`, `/es/`, `/fr/`, `/hi/`, `/it/`, `/ja/`, `/ms/`, `/pt/`, `/ru/`, `/tr/`, `/zh/`
+- `/blog/<lang>/` — localized blog directories per language
+- `/sitemap.xml` and `/sitemap-index.xml` — sitemaps; `/robots.txt` allows all crawlers
+
+## Data Sources
+- Spot prices for gold, silver, platinum, and palladium are fetched in real time from Kitco (`proxy.kitco.com/getPM`), returning bid/ask/mid, change, percent change, and day high/low per metal
+- Regional benchmarks (Shanghai Ag T+D premium and India MCX silver) are served via a Cloudflare Worker API (`metal-prices-api.729r2pzfqs.workers.dev`); when unavailable, the site falls back to calculating them from spot prices plus typical premium/duty assumptions
+- Currency conversion uses live forex rates from `exchangerate-api.com` (USD base), with built-in fallback rates
+- Unit conversions use standard constants (1 troy oz = 31.1035 g)
+
+## Languages
+Available in 12 languages via localized subdirectories:
+- English (`/`)
+- German (`/de/`)
+- Spanish (`/es/`)
+- French (`/fr/`)
+- Hindi (`/hi/`)
+- Italian (`/it/`)
+- Japanese (`/ja/`)
+- Malay (`/ms/`)
+- Portuguese (`/pt/`)
+- Russian (`/ru/`)
+- Turkish (`/tr/`)
+- Chinese (`/zh/`)
+
+## Notes
+- This is a static site hosted on GitHub Pages, served at the custom domain silverprice.win
+- Prices and data are provided for informational purposes only and are not financial, investment, or trading advice
+- Price data is sourced from third-party providers (Kitco, exchange-rate APIs) and may be delayed or differ from official exchange quotes
+- Not affiliated with Kitco, TradingView, the Shanghai Gold Exchange, MCX, or any exchange or data provider
+- Charts are embedded from TradingView
