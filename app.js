@@ -168,14 +168,6 @@ async function fetchPrices() {
     updateLastUpdated();
 }
 
-function fetchFallbackPrices() {
-    prices.gold = { price: 5045, change: 0, high: 5070, low: 5020 };
-    prices.silver = { price: 81.65, change: 0, high: 82.5, low: 81 };
-    prices.platinum = { price: 2107, change: 0, high: 2120, low: 2090 };
-    prices.palladium = { price: 1722, change: 0, high: 1740, low: 1700 };
-    fetchRegionalPrices();
-}
-
 async function fetchRegionalPrices() {
     const usdToCny = 7.24;
     
@@ -343,11 +335,6 @@ document.getElementById('currency').addEventListener('change', e => {
     localStorage.setItem('currency', currentCurrency);
     updateUI(); 
 });
-document.getElementById('language')?.addEventListener('change', e => { 
-    currentLang = e.target.value; 
-    localStorage.setItem('lang', currentLang);
-    applyTranslations();
-});
 document.getElementById('calcAmount').addEventListener('input', updateCalculator);
 document.getElementById('calcUnit').addEventListener('change', updateCalculator);
 
@@ -368,9 +355,7 @@ function detectLanguage() {
 document.addEventListener('DOMContentLoaded', async () => {
     // Load saved preferences
     currentLang = detectLanguage();
-    const langSelect = document.getElementById('language');
-    if (langSelect) langSelect.value = currentLang;
-    
+
     const savedCurrency = localStorage.getItem('currency');
     if (savedCurrency) {
         currentCurrency = savedCurrency;

@@ -18,10 +18,20 @@
     <link rel="alternate" hreflang="tr" href="https://silverprice.win/tr/" />
     <link rel="alternate" hreflang="ja" href="https://silverprice.win/ja/" />
     <link rel="alternate" hreflang="ru" href="https://silverprice.win/ru/" />
-    <title>SilverPrice.win - Live Silver, Gold & Metal Prices</title>
+    <title>SilverPrice.win - Live Silber-, Gold- & Metallpreise</title>
     <link rel="canonical" href="https://silverprice.win/de/">
+    <meta property="og:title" content="SilverPrice.win - Live Silber-, Gold- & Metallpreise">
+    <meta property="og:description" content="Live Edelmetallpreise - Silber, Gold, Platin, Palladium. Echtzeit-Spotpreise, Charts und Gold-Silber-Verhältnis.">
+    <meta property="og:type" content="website">
     <meta property="og:url" content="https://silverprice.win/de/">
-    <meta name="description" content="Live precious metal prices - Silver, Gold, Platinum, Palladium. Real-time spot prices, charts, and gold-silver ratio.">
+    <meta property="og:site_name" content="SilverPrice.win">
+    <meta property="og:locale" content="de_DE">
+    <meta property="og:image" content="https://silverprice.win/logos/logo-icon-512x512.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="SilverPrice.win - Live Silber-, Gold- & Metallpreise">
+    <meta name="twitter:description" content="Live Edelmetallpreise - Silber, Gold, Platin, Palladium. Echtzeit-Spotpreise, Charts und Gold-Silber-Verhältnis.">
+    <meta name="twitter:image" content="https://silverprice.win/logos/logo-icon-512x512.png">
+    <meta name="description" content="Live Edelmetallpreise - Silber, Gold, Platin, Palladium. Echtzeit-Spotpreise, Charts und Gold-Silber-Verhältnis.">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='16' rx='2' fill='%23C0C0C0'/%3E%3Crect x='6' y='10' width='20' height='12' rx='1' fill='%23E8E8E8'/%3E%3Crect x='8' y='13' width='16' height='6' fill='%23F5F5F5'/%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- TradingView Widget -->
@@ -181,16 +191,21 @@
     <footer class="border-t border-slate-700/50 mt-6">
         <div class="max-w-2xl mx-auto px-4 py-4 text-center text-xs text-slate-300">
             <p>Updated every 60s • Data for informational purposes</p>
+            <p class="mt-1">© 2026 SilverPrice.win • <a href="/privacy.html" class="hover:text-white underline">Datenschutz</a></p>
         </div>
     </footer>
 
     <script>window.pageLang = 'de';</script>
-    <script src="../app.js?v=1770934660"></script>
-
-  </div>
-</div>
-<!-- GDPR Cookie Consent -->
-</div>
-</div>
+    <script src="../app.js?v=1783403246"></script>
+    <script>
+        // Language dropdown toggle
+        document.getElementById('langBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('langMenu').classList.toggle('hidden');
+        });
+        document.addEventListener('click', function() {
+            document.getElementById('langMenu')?.classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

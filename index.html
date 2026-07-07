@@ -36,11 +36,13 @@
     <meta property="og:url" content="https://silverprice.win/">
     <meta property="og:site_name" content="SilverPrice.win">
     <meta property="og:locale" content="en_US">
+    <meta property="og:image" content="https://silverprice.win/logos/logo-icon-512x512.png">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Live Silver, Gold & Metal Prices">
     <meta name="twitter:description" content="Real-time precious metal prices - Silver, Gold, Platinum, Palladium. Live spot prices and charts.">
+    <meta name="twitter:image" content="https://silverprice.win/logos/logo-icon-512x512.png">
     
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
@@ -252,13 +254,21 @@
     <footer class="border-t border-slate-700/50 mt-6">
         <div class="max-w-2xl mx-auto px-4 py-4 text-center text-xs text-slate-300">
             <p>Updated every 60s • Data for informational purposes</p>
+            <p class="mt-1">© 2026 SilverPrice.win • <a href="/privacy.html" class="hover:text-white underline">Privacy Policy</a></p>
         </div>
     </footer>
 
     <script>window.pageLang = 'en';</script>
-    <script src="app.js?v=1770934660"></script>
-
-  </div>
-</div>
+    <script src="app.js?v=1783403246"></script>
+    <script>
+        // Language dropdown toggle
+        document.getElementById('langBtn')?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('langMenu').classList.toggle('hidden');
+        });
+        document.addEventListener('click', function() {
+            document.getElementById('langMenu')?.classList.add('hidden');
+        });
+    </script>
 </body>
 </html>

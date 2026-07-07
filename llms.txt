@@ -23,6 +23,7 @@ SilverPrice.win is a fast, lightweight precious-metals price tracker. It shows l
 - [Gold vs Silver](https://silverprice.win/blog/gold-vs-silver.html): Comparison of gold and silver as investments, the gold/silver ratio, and which offers better value in 2026
 - [Shanghai Silver Premium Explained](https://silverprice.win/blog/shanghai-silver-premium.html): Why Chinese silver trades at a premium and what it signals about global demand
 - [Silver Industrial Demand 2026](https://silverprice.win/blog/silver-industrial-demand.html): How solar panels, EVs, and electronics drive record silver demand
+- [Privacy Policy](https://silverprice.win/privacy.html): How the site handles analytics, local storage, and third-party data services
 
 ## URL Patterns
 - `/` — English home page (live price dashboard)

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate language-specific pages with proper SEO"""
+"""Generate language-specific pages with proper SEO.
+
+WARNING (2026-07-07): the generated pages have since been hand-edited with
+additional SEO (localized OG/Twitter tags, privacy footer links, dropdown JS).
+Running this script as-is will clobber those additions - update the template
+logic here first if you need to regenerate.
+"""
 
 import re
 from pathlib import Path
