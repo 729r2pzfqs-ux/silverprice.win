@@ -2,9 +2,12 @@
 """Generate language-specific pages with proper SEO.
 
 WARNING (2026-07-07): the generated pages have since been hand-edited with
-additional SEO (localized OG/Twitter tags, privacy footer links, dropdown JS).
-Running this script as-is will clobber those additions - update the template
-logic here first if you need to regenerate.
+additional SEO (localized OG/Twitter tags, privacy footer links, dropdown JS,
+per-language WebPage JSON-LD, and a compiled /tailwind.css stylesheet instead
+of the Tailwind CDN script). Running this script as-is will clobber those
+additions - update the template logic here first if you need to regenerate.
+If you add/remove Tailwind classes, rebuild tailwind.css with the Tailwind v3
+CLI scanning all *.html files plus app.js.
 """
 
 import re

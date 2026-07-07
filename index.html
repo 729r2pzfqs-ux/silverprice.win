@@ -31,7 +31,7 @@
     
     <!-- Open Graph -->
     <meta property="og:title" content="Live Silver, Gold & Metal Prices | SilverPrice.win">
-    <meta property="og:description" content="Real-time precious metal prices - Silver, Gold, Platinum, Palladium. Live spot prices, charts, and gold-silver ratio.">
+    <meta property="og:description" content="Live silver price per ounce plus gold, platinum and palladium spot prices. Free real-time charts, gold-silver ratio and price calculator in USD, EUR, INR and more. Updated every minute.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://silverprice.win/">
     <meta property="og:site_name" content="SilverPrice.win">
@@ -41,7 +41,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Live Silver, Gold & Metal Prices">
-    <meta name="twitter:description" content="Real-time precious metal prices - Silver, Gold, Platinum, Palladium. Live spot prices and charts.">
+    <meta name="twitter:description" content="Live silver price per ounce plus gold, platinum and palladium spot prices. Free real-time charts, gold-silver ratio and price calculator in USD, EUR, INR and more. Updated every minute.">
     <meta name="twitter:image" content="https://silverprice.win/logos/logo-icon-512x512.png">
     
     <!-- Schema.org Structured Data -->
@@ -69,23 +69,67 @@
 }
     </script>
     <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
     {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "What is the current silver price?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Silver prices change in real-time. Check SilverPrice.win for live spot prices updated every minute."
-                }
-        }]
+      "@type": "Question",
+      "name": "What is the current silver price?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The live silver spot price is displayed at the top of SilverPrice.win and refreshes automatically every 60 seconds during market hours. Prices are shown per troy ounce and can be converted to grams or kilograms with the built-in calculator."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often are the precious metal prices updated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Silver, gold, platinum and palladium spot prices on SilverPrice.win update automatically every 60 seconds, so you always see near real-time market data without refreshing the page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the gold-silver ratio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The gold-silver ratio shows how many ounces of silver one ounce of gold can buy. Historically it has averaged around 60, and it reached a high of about 125 in 2020. Many investors use it to judge whether silver is cheap or expensive relative to gold."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the spot price of a precious metal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The spot price is the current market price for immediate delivery of one troy ounce of a metal, set by global trading in futures and over-the-counter markets. Physical coins and bars usually sell for the spot price plus a dealer premium."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which currencies can I view metal prices in?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SilverPrice.win shows live silver, gold, platinum and palladium prices in US Dollar (USD), Euro (EUR), Chinese Yuan (CNY), Indian Rupee (INR), Malaysian Ringgit (MYR), Australian Dollar (AUD) and British Pound (GBP)."
+      }
     }
+  ]
+}
+    </script>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "SilverPrice.win",
+  "url": "https://silverprice.win/",
+  "logo": "https://silverprice.win/logos/logo-icon-512x512.png",
+  "email": "hello@silverprice.win",
+  "description": "Free live precious metal price tracker covering silver, gold, platinum and palladium in 12 languages."
+}
     </script>
     
     <title>SilverPrice.win - Live Silver, Gold & Metal Prices</title>
-    <meta name="description" content="Live precious metal prices - Silver, Gold, Platinum, Palladium. Real-time spot prices, charts, and gold-silver ratio.">
+    <meta name="description" content="Live silver price per ounce plus gold, platinum and palladium spot prices. Free real-time charts, gold-silver ratio and price calculator in USD, EUR, INR and more. Updated every minute.">
     <meta name="theme-color" content="#C0C0C0">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -96,7 +140,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/tailwind.css">
     <!-- TradingView Widget -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
